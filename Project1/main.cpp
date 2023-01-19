@@ -11,6 +11,7 @@ using namespace std;
 int main() {
     Calculator* list; // Linked list object
     Data data; // Data holds the name and the value for each node
+    int *previousValues; // Hold previous values defined in the linked list
     int maxSize; // Store max size of linked list
     std::string command; // Read commands
     std::string x; // Parameter for commands
@@ -24,6 +25,7 @@ int main() {
         if (command == "CRT") {
             list = new Calculator(); // Create new linked list
             cin >> maxSize; // Store the max size of the linked list
+            previousValues = new int[maxSize]; // Create array to hold previous values defined in the linked list
             cout << "success" << endl;
         } 
         
