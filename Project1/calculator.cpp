@@ -111,6 +111,10 @@ void Calculator::remove(std::string name) {
     }
 }
 
+void Calculator::setSize(int size) {
+    this->size = size;
+}
+
 // Get the size of the linked list 
 int Calculator::getSize() {
     return this->size;

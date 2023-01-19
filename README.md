@@ -1,4 +1,3 @@
-# ECE250 Projects
-# Brandon Vo
+# ECE250 Projects - Brandon Vo
 
 bash run_tests.sh c d

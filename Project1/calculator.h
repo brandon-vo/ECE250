@@ -29,6 +29,7 @@ public:
     double getValue(std::string name);
     void print(std::string name);
     void remove(std::string name);
+    void setSize(int size);
     int getSize();
 };
 
