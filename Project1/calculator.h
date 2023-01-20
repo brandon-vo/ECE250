@@ -5,8 +5,8 @@
 #ifndef CALCULATOR_H
 #define CALCULATOR_H
 
-#include <iostream>
 #include "data.h"
+#include <iostream>
 
 // Calculator object
 class Calculator {
@@ -14,22 +14,20 @@ private:
     // Linked list node
     class Node {
     public:
-        Data data;
-        Node* next;
+        Data data;  // Data object
+        Node *next; // Pointer to next node
     };
-    Node* head;
-    int size;
+    Node *head; // Head of linked list
+    Node *tail; // Tail of linked list
+    int size;   // Size of linked list
 
 public:
     Calculator();
     ~Calculator();
-    void insert(Data data);
-    bool exists(std::string name);
-    void setValue(Data data);
-    double getValue(std::string name);
-    void print(std::string name);
+    void insert(Data data, int maxSize);
+    void compute(std::string x, std::string y, std::string z, std::string calculation);
     void remove(std::string name);
-    void setSize(int size);
+    void print(std::string name);
     int getSize();
 };
 

@@ -9,10 +9,9 @@ using namespace std;
 
 // Main function
 int main() {
-    Calculator *list; // Linked list object
-    Data data;        // Data holds the name and the value for each node
-    // int *previousValues; // Hold previous values defined in the linked list
-    int maxSize;         // Store max size of linked list
+    Calculator *list;    // Linked list object
+    Data data;           // Data holds the name and the value for each node
+    int maxSize;         // Max size of linked list
     std::string command; // Read commands
     std::string x;       // Parameter for commands
     std::string y;       // Parameter for commands
@@ -24,8 +23,7 @@ int main() {
         // CREATE: Create new linked list and store the max size
         if (command == "CRT") {
             list = new Calculator(); // Create new linked list
-            cin >> maxSize;          // Store the max size of the linked list
-            // previousValues = new int[maxSize]; // Create array to hold previous values defined in the linked list
+            cin >> maxSize;
             cout << "success" << endl;
         }
 
@@ -42,72 +40,32 @@ int main() {
             data.name = x;
             data.val = val;
 
-            // Variable already exists in list or list is already at maximum capacity
-            if (list->exists(x) || list->getSize() >= maxSize) {
-                cout << "failure" << endl;
-            } else {
-                list->insert(data); // Insert data object to the end of the linked list
-                cout << "success" << endl;
-            }
+            list->insert(data, maxSize); // Insert data object to the end of the linked list
 
-            // ADD: Add node x + node y values and assign it to node z value
-        } else if (command == "ADD") {
+            // ADD/SUB: Add/Subtract nodes x and y and assign it to node z value
+        } else if (command == "ADD" || command == "SUB") {
             // Assign name inputs
             cin >> x;
             cin >> y;
             cin >> z;
 
-            // List doesn't contain one of the variables x, y, or z
-            if (!list->exists(x) || !list->exists(y) || !list->exists(z)) {
-                cout << "failure" << endl;
-            } else {
-                data.name = z;                                    // Assign name
-                data.val = list->getValue(x) + list->getValue(y); // Compute x + y
-                list->setValue(data);                             // Set the value of the node in the linked list
-                cout << "success" << endl;
-            }
+            list->compute(x, y, z, command); // Compute the nodes
 
-            // SUBTRACT: Subtract node x + node y values and assign it to node z value
-        } else if (command == "SUB") {
-            // Assign name inputs
-            cin >> x;
-            cin >> y;
-            cin >> z;
-
-            // List doesn't contain one of the variables x, y, or z
-            if (!list->exists(x) || !list->exists(y) || !list->exists(z)) {
-                cout << "failure" << endl;
-            } else {
-                data.name = z;                                    // Assign name
-                data.val = list->getValue(x) - list->getValue(y); // Compute x - y
-                list->setValue(data);                             // Set the value of the node in the linked list
-                cout << "success" << endl;
-            }
-
-            // REMOVE: Remove node with given name
+            // REMOVE: Delete node from linked list
         } else if (command == "REM") {
-            cin >> x;              // Assign name input
-            if (list->exists(x)) { // Confirm node x exists in the list
-                list->remove(x);   // Delete the node
-                cout << "success" << endl;
-            } else {
-                cout << "failure" << endl;
-            }
+            cin >> x;        // Assign name input
+            list->remove(x); // Delete the node
 
             // PRINT: Print value of node name
         } else if (command == "PRT") {
-            cin >> x;              // Assign name input
-            if (list->exists(x)) { // Confirm node x exists in the list
-                list->print(x);    // Print the node value
-            } else {
-                cout << "variable " << x << " not found" << endl;
-            }
+            cin >> x;       // Assign name input
+            list->print(x); // Print the node value
 
             // END: Exit loop
         } else if (command == "END") {
             break;
         }
     }
-    delete list; // Delete linked list calculator
+    delete list; // Delete linked list calculator to prevent leaks
     return 0;    // Terminate
 }
