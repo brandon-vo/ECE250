@@ -9,12 +9,12 @@ using namespace std;
 
 // Main function
 int main() {
-    Calculator *list;    // Linked list object
-    std::string command; // Read commands
-    std::string x;       // Parameter for commands
-    std::string y;       // Parameter for commands
-    std::string z;       // Parameter for commands
-    double val;          // Paramter for values
+    Calculator *list; // Linked list object
+    string command;   // Read commands
+    string x;         // Parameter for commands
+    string y;         // Parameter for commands
+    string z;         // Parameter for commands
+    double val;       // Paramter for values
 
     // Read command
     while (cin >> command) {
@@ -31,7 +31,7 @@ int main() {
         else if (command == "DEF") {
 
             if (list->getSize() == list->getMaxSize()) { // Check if linked list is full
-                std::cout << "failure" << std::endl;
+                cout << "failure" << endl;
                 continue;
             }
 

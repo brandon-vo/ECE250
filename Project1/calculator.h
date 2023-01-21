@@ -7,6 +7,7 @@
 
 #include "node.h"
 #include <iostream>
+using namespace std;
 
 // Calculator object
 class Calculator {
@@ -19,13 +20,13 @@ private:
 public:
     Calculator();
     ~Calculator();
-    void insert(std::string name, double val);
-    void compute(std::string x, std::string y, std::string z, std::string calculation);
-    void remove(std::string name);
-    void print(std::string name);
-    void setMaxSize(int sizeToSet);
-    int getMaxSize() const;
-    int getSize() const;
+    void insert(string name, double val);
+    void compute(string x, string y, string z, string calculation);
+    void remove(string name);
+    void print(string name);
+    void setMaxSize(int sizeToSet) { this->maxSize = sizeToSet; };
+    int getMaxSize() const { return maxSize; };
+    int getSize() const { return size; };
 };
 
 #endif
