@@ -38,7 +38,9 @@ void Calculator::insert(std::string name, double val) {
     }
 
     // Create new node and set to name and val
-    Node *newNode = new Node(name, val);
+    Node *newNode = new Node();
+    newNode->setName(name);
+    newNode->setVal(val);
 
     if (!this->head) { // Empty linked list
         // Set head and tail to new data
