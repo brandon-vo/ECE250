@@ -3,7 +3,7 @@
 ////////////////////////////////////
 
 #include "calculator.h"
-#include "data.h"
+#include "node.h"
 using namespace std;
 
 // Constructor
@@ -11,6 +11,7 @@ Calculator::Calculator() {
     this->head = nullptr;
     this->tail = nullptr;
     this->size = 0;
+    this->maxSize = 0;
 }
 
 // Destructor
@@ -18,45 +19,41 @@ Calculator::~Calculator() {
     Node *current = this->head;
     // Traverse through linked list and delete nodes
     while (current != nullptr) {
-        Node *next = current->next;
+        Node *next = current->getNext();
         delete current;
         current = next;
     }
 }
 
 // Insert node into end of linked list
-void Calculator::insert(Data newData, int maxSize) {
-    if (this->size == maxSize) { // Check if linked list is full
-        std::cout << "failure" << std::endl;
-        return; // Exit function
-    }
-
+void Calculator::insert(std::string name, double val) {
     Node *current = head;
     while (current != nullptr) {
         // Check if the linked list already has a node with the given name
-        if (current->data.name == newData.name) {
+        if (current->getName() == name) {
             std::cout << "failure" << std::endl;
             return; // Exit function
         }
-        current = current->next; // Traverse to next node
+        current = current->getNext(); // Traverse to next node
     }
 
-    // Create new node and set to new data
-    Node *newNode = new Node();
-    newNode->data = newData;
+    // Create new node and set to name and val
+    Node *newNode = new Node(name, val);
 
     if (!this->head) { // Empty linked list
         // Set head and tail to new data
         this->head = newNode;
         this->tail = newNode;
     } else {
-        tail->next = newNode; // Set new node to the end of the linked list
-        tail = newNode;       // Update tail pointer to the new node
+        // WRITE CODE HERE
+        this->tail->setNext(newNode); // Set tail's next to new node
+        this->tail = newNode;         // Update tail to new node
     }
     this->size++; // Increase size counter
     std::cout << "success" << std::endl;
 }
 
+// Search for nodes x, y, and z, and computing the value of z based on the used command
 void Calculator::compute(std::string x, std::string y, std::string z, std::string calculation) {
     Node *current = this->head; // Pointer to traverse through linked list
     Node *nodeX = nullptr;      // Node x
@@ -64,25 +61,25 @@ void Calculator::compute(std::string x, std::string y, std::string z, std::strin
     Node *nodeZ = nullptr;      // Node z
     while (current != nullptr) {
         // Finding nodes x, y, and z and storing them
-        if (current->data.name == x) {
+        if (current->getName() == x) {
             nodeX = current;
         }
-        if (current->data.name == y) {
+        if (current->getName() == y) {
             nodeY = current;
         }
-        if (current->data.name == z) {
+        if (current->getName() == z) {
             nodeZ = current;
         }
-        current = current->next; // Move pointer
+        current = current->getNext(); // Move pointer
     }
 
     // Checking if all nodes exist
     if (nodeX != nullptr && nodeY != nullptr && nodeZ != nullptr) {
         // Two options: ADD or SUB
         if (calculation == "ADD") {
-            nodeZ->data.val = nodeX->data.val + nodeY->data.val; // z = x + y
+            nodeZ->setVal(nodeX->getVal() + nodeY->getVal()); // z = x + y
         } else {
-            nodeZ->data.val = nodeX->data.val - nodeY->data.val; // z = x - y
+            nodeZ->setVal(nodeX->getVal() - nodeY->getVal()); // z = x - y
         }
         std::cout << "success" << std::endl;
     } else {
@@ -96,20 +93,16 @@ void Calculator::remove(std::string name) {
     Node *current = this->head;
     Node *previous = nullptr;
     while (current != nullptr) {
-        if (current->data.name == name) { // Found node to remove
-            if (previous != nullptr) {
-                previous->next = current->next; // Set previous to next
-            } else {
-                this->head = current->next; // Set head to next
-            }
-            delete current; // Delete node
+        if (current->getName() == name) {    // Found node to remove
+            this->head = current->getNext(); // Set head to next
+            delete current;                  // Delete node
             current = nullptr;
             this->size--; // Decrease size count
             std::cout << "success" << std::endl;
             return; // Exit function
         }
-        previous = current;      // Move previous pointer
-        current = current->next; // Move current pointer
+        previous = current;           // Move previous pointer
+        current = current->getNext(); // Move current pointer
     }
     // Traversed through linked list and didn't find node
     std::cout << "failure" << std::endl;
@@ -119,17 +112,27 @@ void Calculator::remove(std::string name) {
 void Calculator::print(std::string name) {
     Node *current = this->head;
     while (current != nullptr) {
-        if (current->data.name == name) {                // Found node
-            std::cout << current->data.val << std::endl; // Print value
+        if (current->getName() == name) {                // Found node
+            std::cout << current->getVal() << std::endl; // Print value
             return;                                      // Exit function
         }
-        current = current->next;
+        current = current->getNext();
     }
     // Traversed through linked list and didn't find node
     std::cout << "variable " << name << " not found" << std::endl;
 }
 
+// Set the maximum size of the linked list
+void Calculator::setMaxSize(int sizeToSet) {
+    this->maxSize = sizeToSet;
+}
+
+// Get the maximum size of the linked list
+int Calculator::getMaxSize() const {
+    return this->maxSize;
+}
+
 // Get the current size of the linked list
-int Calculator::getSize() {
+int Calculator::getSize() const {
     return this->size;
 }
