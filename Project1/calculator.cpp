@@ -47,7 +47,6 @@ void Calculator::insert(string name, double val) {
         this->head = newNode;
         this->tail = newNode;
     } else {
-        // WRITE CODE HERE
         this->tail->setNext(newNode); // Set tail's next to new node
         this->tail = newNode;         // Update tail to new node
     }
@@ -56,7 +55,7 @@ void Calculator::insert(string name, double val) {
 }
 
 // Search for nodes x, y, and z, and computing the value of z based on the used command
-void Calculator::compute(string x, string y, string z, string calculation) {
+void Calculator::compute(string x, string y, string z, string command) {
     Node *current = this->head; // Pointer to traverse through linked list
     Node *nodeX = nullptr;      // Node x
     Node *nodeY = nullptr;      // Node y
@@ -78,7 +77,7 @@ void Calculator::compute(string x, string y, string z, string calculation) {
     // Checking if all nodes exist
     if (nodeX != nullptr && nodeY != nullptr && nodeZ != nullptr) {
         // Two options: ADD or SUB
-        if (calculation == "ADD") {
+        if (command == "ADD") {
             nodeZ->setVal(nodeX->getVal() + nodeY->getVal()); // z = x + y
         } else {
             nodeZ->setVal(nodeX->getVal() - nodeY->getVal()); // z = x - y
@@ -95,15 +94,19 @@ void Calculator::remove(string name) {
     Node *current = this->head;
     Node *previous = nullptr;
     while (current != nullptr) {
-        if (current->getName() == name) {    // Found node to remove
-            this->head = current->getNext(); // Set head to next
-            delete current;                  // Delete node
+        if (current->getName() == name) {        // Found node to remove
+            if (previous == nullptr) {           // First node in linked list is the node to remove
+                this->head = current->getNext(); // Move head to the next node
+            } else {
+                previous->setNext(current->getNext()); // Link previous node to the node after current
+            }
+            delete current; // Delete node
             current = nullptr;
             this->size--; // Decrease size count
             cout << "success" << endl;
             return; // Exit function
         }
-        previous = current;           // Move previous pointer
+        previous = current;           // Update previous
         current = current->getNext(); // Move current pointer
     }
     // Traversed through linked list and didn't find node

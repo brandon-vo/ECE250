@@ -21,7 +21,7 @@ public:
     Calculator();
     ~Calculator();
     void insert(string name, double val);
-    void compute(string x, string y, string z, string calculation);
+    void compute(string x, string y, string z, string command);
     void remove(string name);
     void print(string name);
     void setMaxSize(int sizeToSet) { this->maxSize = sizeToSet; };

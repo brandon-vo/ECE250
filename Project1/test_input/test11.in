@@ -1,0 +1,9 @@
+CRT 5
+DEF a 1
+DEF b 1
+DEF c 1
+REM b
+ADD a c a
+PRT a
+PRT b
+END
