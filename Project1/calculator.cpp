@@ -6,7 +6,7 @@
 #include "node.h"
 using namespace std;
 
-// Constructor
+// Constructor: Initialize values
 Calculator::Calculator() {
     this->head = nullptr;
     this->tail = nullptr;
@@ -14,14 +14,14 @@ Calculator::Calculator() {
     this->maxSize = 0;
 }
 
-// Destructor
+// Destructor: Delete all nodes in linked list
 Calculator::~Calculator() {
     Node *current = this->head;
     // Traverse through linked list and delete nodes
     while (current != nullptr) {
-        Node *next = current->getNext();
-        delete current;
-        current = next;
+        Node *next = current->getNext(); // Store next node
+        delete current;                  // Delete current node
+        current = next;                  // Move current to the stored next node
     }
 }
 
@@ -38,17 +38,17 @@ void Calculator::insert(string name, double val) {
     }
 
     // Create new node and set to name and val
-    Node *newNode = new Node();
-    newNode->setName(name);
-    newNode->setVal(val);
+    Node *insertNode = new Node();
+    insertNode->setName(name);
+    insertNode->setVal(val);
 
     if (!this->head) { // Empty linked list
         // Set head and tail to new data
-        this->head = newNode;
-        this->tail = newNode;
+        this->head = insertNode;
+        this->tail = insertNode;
     } else {
-        this->tail->setNext(newNode); // Set tail's next to new node
-        this->tail = newNode;         // Update tail to new node
+        this->tail->setNext(insertNode); // Connect new node to the end of the list
+        this->tail = insertNode;         // Update tail to the new node
     }
     this->size++; // Increase size counter
     cout << "success" << endl;
@@ -60,8 +60,11 @@ void Calculator::compute(string x, string y, string z, string command) {
     Node *nodeX = nullptr;      // Node x
     Node *nodeY = nullptr;      // Node y
     Node *nodeZ = nullptr;      // Node z
+
+    // Finding nodes x, y, and z and storing them
     while (current != nullptr) {
-        // Finding nodes x, y, and z and storing them
+        // 3 if statements are needed instead of an if-else statement
+        // because we may need to compute with the same name (Ex: x + x = x)
         if (current->getName() == x) {
             nodeX = current;
         }
@@ -100,9 +103,9 @@ void Calculator::remove(string name) {
             } else {
                 previous->setNext(current->getNext()); // Link previous node to the node after current
             }
-            delete current; // Delete node
-            current = nullptr;
-            this->size--; // Decrease size count
+            delete current;    // Delete node
+            current = nullptr; // Set current to nullptr
+            this->size--;      // Decrease size count
             cout << "success" << endl;
             return; // Exit function
         }

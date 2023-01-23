@@ -11,10 +11,10 @@ using namespace std;
 int main() {
     Calculator *list; // Linked list object
     string command;   // Read commands
-    string x;         // Parameter for commands
-    string y;         // Parameter for commands
-    string z;         // Parameter for commands
-    double val;       // Paramter for values
+    string x;         // Name parameter for commands
+    string y;         // Name parameter for commands
+    string z;         // Name parameter for commands
+    double val;       // Value parameter for commands
 
     // Read command
     while (cin >> command) {
@@ -32,7 +32,7 @@ int main() {
 
             if (list->getSize() == list->getMaxSize()) { // Check if linked list is full
                 cout << "failure" << endl;
-                continue;
+                continue; // Skip to next iteration
             }
 
             // Assign parameters to input values
