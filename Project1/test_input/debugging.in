@@ -1,0 +1,11 @@
+CRT 5
+DEF v0 1
+DEF v1 1
+DEF v2 1
+DEF v3 1
+DEF v4 1
+REM v4
+DEF thisshouldexist 1
+PRT thisshouldexist
+DEF thisshouldalsonotexist 123
+END

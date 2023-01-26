@@ -103,6 +103,9 @@ void Calculator::remove(string name) {
             } else {
                 previous->setNext(current->getNext()); // Link previous node to the node after current
             }
+            if (current == this->tail) { // Check if current node is the last node in list
+                this->tail = previous;   // Update tail pointer to point to previous node
+            }
             delete current;    // Delete node
             current = nullptr; // Set current to nullptr
             this->size--;      // Decrease size count
