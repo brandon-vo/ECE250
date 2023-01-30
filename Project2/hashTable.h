@@ -2,12 +2,22 @@
 // Brandon Vo - ECE 250 Project 2 //
 ////////////////////////////////////
 
-#ifndef HASH_TABLE_H
-#define HASH_TABLE_H
+#ifndef HASHTABLE_H
+#define HASHTABLE_H
 
-#include <iostream>
 #include <vector>
 using namespace std;
 
+class HashTable {
+private:
+    std::vector<int> table;
+    int m; // Size of table
+public:
+    HashTable(int size);
+    void insert(int key);
+    bool search(int key);
+    int primaryHash(int key);
+    int secondaryHash(int key);
+};
 
 #endif
