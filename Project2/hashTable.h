@@ -6,18 +6,20 @@
 #define HASHTABLE_H
 
 #include <vector>
+#include <cmath>
+#include "Process.h"
 using namespace std;
 
 class HashTable {
-private:
-    std::vector<int> table;
-    int m; // Size of table
+protected:
+    int size; // Size of table (m)
+    vector<Process> *table;
+    int *memory; // Memory array
 public:
-    HashTable(int size);
-    void insert(int key);
-    bool search(int key);
-    int primaryHash(int key);
-    int secondaryHash(int key);
+    HashTable(int n, int p);
+    int getPrimaryHash(int pidKey) const;
+    int getSecondaryHash(int pidKey) const;
+    void searchKey(int pidKey);
 };
 
 #endif
