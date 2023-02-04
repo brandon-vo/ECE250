@@ -5,22 +5,24 @@
 #ifndef HASHTABLE_H
 #define HASHTABLE_H
 
-#include <vector>
-#include <cmath>
 #include "Process.h"
+#include <cmath>
+#include <vector>
 using namespace std;
 
 class HashTable {
 protected:
-    int size; // Size of table (m)
+    int size;               // Size of table (m)
+    int currentSize;        // Current size of table
+    int *memory;            // Memory array
     vector<Process> *table; // Vector of processes
-    int *memory; // Memory array
 public:
     HashTable(int n, int p);
+    ~HashTable();
     int getPrimaryHash(int pidKey) const;
     int getSecondaryHash(int pidKey) const;
     void searchKey(int pidKey);
-    void writeMemory(int pidKey, int addr, int x);
+    void deleteKey(int pidKey);
 };
 
 #endif

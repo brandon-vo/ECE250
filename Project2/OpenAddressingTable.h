@@ -11,6 +11,8 @@ public:
     OpenAddressingTable(int n, int p);
     void insertDoubleHash(int pidKey);
     void deleteOpen(int pidKey);
+    void writeMemoryOpen(int pidKey, int addr, int x);
+    void readMemoryOpen(int pidKey, int addr);
 };
 
 #endif

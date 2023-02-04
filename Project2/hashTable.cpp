@@ -15,6 +15,11 @@ HashTable::HashTable(int n, int p) {
     this->memory = new int[n];
 }
 
+HashTable::~HashTable() {
+    delete[] table;
+    delete[] memory;
+}
+
 int HashTable::getPrimaryHash(int pidKey) const {
     return pidKey % size; // h1
 }
@@ -36,16 +41,15 @@ void HashTable::searchKey(int pidKey) {
     cout << "not found" << endl;
 }
 
-void HashTable::writeMemory(int pidKey, int addr, int x) {
-    
-    // int h1 = getPrimaryHash(pidKey);
-    // for (int i = 0; i < table[h1].size(); i++) {
-    //     if (table[h1][i].getPID() == pidKey) {
-    //         int index = table[h1][i].getPageIndex() * size + addr;
-    //         memory[index] = x;
-    //         cout << "success" << endl;
-    //         return;
-    //     }
-    // }
-    // cout << "not found" << endl;
+void HashTable::deleteKey(int pidKey) {
+    int h1 = getPrimaryHash(pidKey);
+    for (int i = 0; i < table[h1].size(); i++) {
+        if (table[h1][i].getPID() == pidKey) {
+            table[h1].erase(table[h1].begin() + i);
+            this->currentSize--;
+            cout << "success" << endl;
+            return;
+        }
+    }
+    cout << "failure" << endl;
 }

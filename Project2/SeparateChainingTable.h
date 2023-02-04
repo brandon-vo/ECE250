@@ -10,7 +10,9 @@ class SeparateChainingTable  : public HashTable {
 public:
     SeparateChainingTable(int n, int p);
     void insertOrdered(int pidKey);
-    void deleteOrdered(int pidKey);
+    void writeMemoryOrdered(int pidKey, int addr, int x);
+    void readMemoryOrdered(int pidKey, int addr);
+    void printChain(int m);
 };
 
 #endif

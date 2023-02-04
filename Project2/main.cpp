@@ -19,6 +19,8 @@ void useOpenHashing() {
         int n;
         int p;
         int pid;
+        int addr;
+        int x;
 
         if (command == "M") {
             cin >> n; // N: memory size
@@ -30,50 +32,24 @@ void useOpenHashing() {
         } else if (command == "INSERT") {
             cin >> pid;
             openTable->insertDoubleHash(pid);
-            // Insert a PID (a key).
-            // If it is possible, a new page of memory is
-            // allocated to PID. Note that regardless of the
-            // type of hashing used, if all pages are used
-            // insertion is not possible and the table is
-            // considered to be full.
-            // Your program must keep track of which page is
-            // allocated to which process or the commands
-            // below will not work.
-            // Assume PID > 0; this means that 0 can be used
-            // as a sentinel value
 
         } else if (command == "SEARCH") {
             cin >> pid;
             openTable->searchKey(pid);
 
         } else if (command == "WRITE") {
-            // Write the integer (x) to the memory address.
-            // Please take into account that both PID and
-            // ADDR (virtual address) are given to determine
-            // the physical address as discussed earlier in this
-            // document
+            cin >> pid;
+            cin >> addr;
+            cin >> x;
+            openTable->writeMemoryOpen(pid, addr, x);
 
         } else if (command == "READ") {
-            // Read the integer stored in the memory address.
-            // Please take into account that both PID and
-            // ADDR are given to determine the physical
-            // address as discussed above.
-
+            cin >> pid;
+            cin >> addr;
+            openTable->readMemoryOpen(pid, addr);
         } else if (command == "DELETE") {
-            // Delete the key PID from the hash table.
-            // NOTE: This de-allocates the memory page
-            // associated with that PID, but you do not need
-            // to do anything with the memory stored there.
-
-        } else if (command == "PRINT") {
-            // Print the chain of stored keys in position m of
-            // the hash table. Keys should be printed in
-            // descending order. Keys in the chain are
-            // separated by one space. The output indicates
-            // that the chain is empty if that is the case.
-            // NOTE: This command is only for separate
-            // chaining. It will not be used to test double
-            // hashing.
+            cin >> pid;
+            openTable->deleteKey(pid);
 
             // END: Exit loop
         } else if (command == "END") {
@@ -94,6 +70,9 @@ void useOrderedHashing() {
         int n;
         int p;
         int pid;
+        int addr;
+        int x;
+        int m;
 
         if (command == "M") {
             cin >> n; // N: memory size
@@ -105,51 +84,29 @@ void useOrderedHashing() {
         } else if (command == "INSERT") {
             cin >> pid;
             orderedTable->insertOrdered(pid);
-            // table ->insertOrdered(pid);
-            // Insert a PID (a key).
-            // If it is possible, a new page of memory is
-            // allocated to PID. Note that regardless of the
-            // type of hashing used, if all pages are used
-            // insertion is not possible and the table is
-            // considered to be full.
-            // Your program must keep track of which page is
-            // allocated to which process or the commands
-            // below will not work.
-            // Assume PID > 0; this means that 0 can be used
-            // as a sentinel value
 
         } else if (command == "SEARCH") {
             cin >> pid;
             orderedTable->searchKey(pid);
 
         } else if (command == "WRITE") {
-            // Write the integer (x) to the memory address.
-            // Please take into account that both PID and
-            // ADDR (virtual address) are given to determine
-            // the physical address as discussed earlier in this
-            // document
+            cin >> pid;
+            cin >> addr;
+            cin >> x;
+            orderedTable->writeMemoryOrdered(pid, addr, x);
 
         } else if (command == "READ") {
-            // Read the integer stored in the memory address.
-            // Please take into account that both PID and
-            // ADDR are given to determine the physical
-            // address as discussed above.
+            cin >> pid;
+            cin >> addr;
+            orderedTable->readMemoryOrdered(pid, addr);
 
         } else if (command == "DELETE") {
-            // Delete the key PID from the hash table.
-            // NOTE: This de-allocates the memory page
-            // associated with that PID, but you do not need
-            // to do anything with the memory stored there.
+            cin >> pid;
+            orderedTable->deleteKey(pid);
 
         } else if (command == "PRINT") {
-            // Print the chain of stored keys in position m of
-            // the hash table. Keys should be printed in
-            // descending order. Keys in the chain are
-            // separated by one space. The output indicates
-            // that the chain is empty if that is the case.
-            // NOTE: This command is only for separate
-            // chaining. It will not be used to test double
-            // hashing.
+            cin >> m;
+            orderedTable->printChain(m);
 
             // END: Exit loop
         } else if (command == "END") {
@@ -166,10 +123,8 @@ int main() {
     cin >> type;
 
     if (type == "OPEN") {
-        // Use open hashing
         useOpenHashing();
     } else if (type == "ORDERED") {
-        // Use ordered hashing
         useOrderedHashing();
     }
 }
