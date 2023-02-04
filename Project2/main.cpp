@@ -30,7 +30,6 @@ void useOpenHashing() {
         } else if (command == "INSERT") {
             cin >> pid;
             openTable->insertDoubleHash(pid);
-            // table ->insertOrdered(pid);
             // Insert a PID (a key).
             // If it is possible, a new page of memory is
             // allocated to PID. Note that regardless of the

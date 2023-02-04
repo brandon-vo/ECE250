@@ -35,3 +35,17 @@ void HashTable::searchKey(int pidKey) {
     }
     cout << "not found" << endl;
 }
+
+void HashTable::writeMemory(int pidKey, int addr, int x) {
+    
+    // int h1 = getPrimaryHash(pidKey);
+    // for (int i = 0; i < table[h1].size(); i++) {
+    //     if (table[h1][i].getPID() == pidKey) {
+    //         int index = table[h1][i].getPageIndex() * size + addr;
+    //         memory[index] = x;
+    //         cout << "success" << endl;
+    //         return;
+    //     }
+    // }
+    // cout << "not found" << endl;
+}
