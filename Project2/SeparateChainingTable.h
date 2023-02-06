@@ -6,15 +6,15 @@
 #include <vector>
 using namespace std;
 
-class SeparateChainingTable  : public HashTable {
+class SeparateChainingTable : public HashTable {
 public:
     SeparateChainingTable(int n, int p);
-    void insertOrdered(int pidKey);
-    void searchOrdered(int pidKey);
-    void writeMemoryOrdered(int pidKey, int addr, int x);
-    void readMemoryOrdered(int pidKey, int addr);
+    void insertOrdered(unsigned int pidKey);
+    void searchOrdered(unsigned int pidKey);
+    void writeMemoryOrdered(unsigned int pidKey, int addr, int x);
+    void readMemoryOrdered(unsigned int pidKey, int addr);
     void printChain(int m);
-    void deleteOrdered(int pidKey);
+    void deleteOrdered(unsigned int pidKey);
 };
 
 #endif

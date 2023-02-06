@@ -6,18 +6,18 @@ success
 success
 found 5 in 1
 success
-failure
-failure
-failure
-failure
+success
+success
+success
+success
 found 25 in 1
-0 1
+0 5
+0 5
+1 6
+1 6
+3 8
+3 8
 failure
-1 2
-failure
-failure
-3 4
-25 0
 success
 success
 found 5 in 1

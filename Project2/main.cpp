@@ -11,16 +11,15 @@ using namespace std;
 
 void useOpenHashing() {
     string command;
+    OpenAddressingTable *openTable; // Hash table;
+    int n;
+    int p;
+    unsigned int pid;
+    int addr;
+    int x;
 
     // Read command
     while (cin >> command) {
-
-        OpenAddressingTable *openTable; // Hash table;
-        int n;
-        int p;
-        int pid;
-        int addr;
-        int x;
 
         if (command == "M") {
             cin >> n; // N: memory size
@@ -56,23 +55,22 @@ void useOpenHashing() {
             break;
         }
     }
-
+    delete openTable;
     return; // Terminate
 }
 
 void useOrderedHashing() {
     string command;
+    SeparateChainingTable *orderedTable; // Hash table;
+    int n;
+    int p;
+    unsigned int pid;
+    int addr;
+    int x;
+    int m;
 
     // Read command
     while (cin >> command) {
-
-        SeparateChainingTable *orderedTable; // Hash table;
-        int n;
-        int p;
-        int pid;
-        int addr;
-        int x;
-        int m;
 
         if (command == "M") {
             cin >> n; // N: memory size
@@ -113,7 +111,7 @@ void useOrderedHashing() {
             break;
         }
     }
-
+    delete orderedTable;
     return; // Terminate
 }
 

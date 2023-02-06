@@ -9,11 +9,11 @@ using namespace std;
 class OpenAddressingTable : public HashTable {
 public:
     OpenAddressingTable(int n, int p);
-    void insertDoubleHash(int pidKey);
-    void searchOpen(int pidKey);
-    void deleteOpen(int pidKey);
-    void writeMemoryOpen(int pidKey, int addr, int x);
-    void readMemoryOpen(int pidKey, int addr);
+    void insertDoubleHash(unsigned int pidKey);
+    void searchOpen(unsigned int pidKey);
+    void deleteOpen(unsigned int pidKey);
+    void writeMemoryOpen(unsigned int pidKey, int addr, int x);
+    void readMemoryOpen(unsigned int pidKey, int addr);
 };
 
 #endif

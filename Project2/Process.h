@@ -6,9 +6,8 @@ private:
     int pid;
     int startAddress;
 public:
-    Process(int pid, int startAddress);
+    Process(unsigned int pid, int startAddress);
     int getPID();
-    void setPID(int pid);
     int getStartAddress();
 };
 

@@ -13,6 +13,7 @@ using namespace std;
 class HashTable {
 protected:
     int size;               // Size of table (m)
+    int memorySize;         // Size of memory (n)
     int pageSize;           // Size of page (p)
     int currentSize;        // Current size of table
     int *memory;            // Memory array
@@ -20,8 +21,8 @@ protected:
 public:
     HashTable(int n, int p);
     ~HashTable();
-    int getPrimaryHash(int pidKey) const;
-    int getSecondaryHash(int pidKey) const;
+    unsigned int getPrimaryHash(unsigned int pidKey) const;
+    unsigned int getSecondaryHash(unsigned int pidKey) const;
 };
 
 #endif

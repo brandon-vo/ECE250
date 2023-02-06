@@ -10,13 +10,13 @@ using namespace std;
 
 SeparateChainingTable::SeparateChainingTable(int n, int p) : HashTable(n, p) {}
 
-void SeparateChainingTable::insertOrdered(int pidKey) {
+void SeparateChainingTable::insertOrdered(unsigned int pidKey) {
     // if table is full, print failure and return
     if (this->currentSize == size) {
         cout << "failure" << endl;
         return;
     }
-    int h1 = getPrimaryHash(pidKey);
+    unsigned int h1 = getPrimaryHash(pidKey);
     // if pidKey is already in the table, print failure and return
     int i = 0;
     while (!table[h1].empty() && i < size) {
@@ -43,42 +43,91 @@ void SeparateChainingTable::insertOrdered(int pidKey) {
     cout << "success" << endl;
 }
 
-void SeparateChainingTable::writeMemoryOrdered(int pidKey, int addr, int x) {
-    int h1 = getPrimaryHash(pidKey);
-    int i = 0;
-    while (!table[h1].empty() && table[h1][0].getPID() != pidKey && i < size) {
-        h1 = h1 % size;
-        i++;
-    }
+void SeparateChainingTable::writeMemoryOrdered(unsigned int pidKey, int addr, int x) {
+    unsigned int h1 = getPrimaryHash(pidKey);
+    auto &bucket = table[h1];
 
-    if (i == size) {
-        cout << "failure" << endl;
-        return;
-    }
-
-    memory[table[h1][0].getStartAddress() + addr] = x;
-    cout << "success" << endl;
-}
-
-void SeparateChainingTable::readMemoryOrdered(int pidKey, int addr) {
-    int h1 = getPrimaryHash(pidKey);
-    int i = 0;
-    while (!table[h1].empty() && i < size) {
-        if (table[h1][0].getPID() == pidKey) {
-            int physicalAddr = table[h1][0].getStartAddress() + addr;
-            if (physicalAddr >= 0) { // && physicalAddr < pageSize) {
-                int value = memory[physicalAddr];
-                cout << addr << " " << value << endl;
-                return;
-            } else {
-                cout << "failure" << endl;
+    for (auto &entry : bucket) {
+        if (entry.getPID() == pidKey) {
+            int physicalAddr = entry.getStartAddress() + addr;
+            // cout << entry.getStartAddress() << " " << addr << " " << physicalAddr << " " << size << " " << memorySize << endl;
+            // ag_02: write 5 3 4 -> physical = 4, size = 16 / 4 = 4 SUCCESS (getting failure)
+            // ag_09: write 4 4 2 -> physical = 4, size = 4 / 1 = 4 FAILURE
+            if (physicalAddr >= 0 && physicalAddr < memorySize && addr >= 0 && addr < pageSize) {
+                memory[physicalAddr] = x;
+                cout << "success" << endl;
                 return;
             }
         }
-        h1 = h1 % size;
-        i++;
     }
     cout << "failure" << endl;
+    return;
+
+    // int h1 = getPrimaryHash(pidKey);
+    // int i = 0;
+    // while (!table[h1].empty() && table[h1][0].getPID() != pidKey && i < size) {
+    //     h1 = (h1 + 1) % size;
+    //     i++;
+    // }
+    // // cout << i << endl;
+    // if (i == size){
+    //     cout << "failure" << endl;
+    //     return;
+    // }
+    // // if (!table[h1][0].getStartAddress()) {
+    // //     cout << "failure" << endl;
+    // //     return;
+    // // }
+    // // cout << addr << " " << table[h1][0].getStartAddress() << endl;
+    // // if (addr + table[h1][0].getStartAddress() == pageSize) { // fixes case 3 but weird
+    // //     cout << "failure" << endl;
+    // //     return;
+    // // }
+    // if (addr + table[h1][0].getStartAddress() > size) {
+    //     cout << "failure" << endl;
+    //     return;
+    // }
+
+    // memory[table[h1][0].getStartAddress() + addr] = x;
+    // cout << "success" << endl;
+}
+
+void SeparateChainingTable::readMemoryOrdered(unsigned int pidKey, int addr) {
+    unsigned int h1 = getPrimaryHash(pidKey);
+    auto &bucket = table[h1];
+
+    for (auto &entry : bucket) {
+        if (entry.getPID() == pidKey) {
+            int physicalAddr = entry.getStartAddress() + addr;
+            if (physicalAddr >= 0 && physicalAddr < memorySize && addr >= 0 && addr < pageSize) {
+                int value = memory[physicalAddr];
+                cout << addr << " " << value << endl;
+                return;
+            }
+        }
+    }
+    cout << "failure" << endl;
+    return;
+
+    // unsigned int h1 = getPrimaryHash(pidKey);
+    // int i = 0;
+    // while (!table[h1].empty() && i < size) {
+    //     if (table[h1][0].getPID() == pidKey) {
+    //         int physicalAddr = table[h1][0].getStartAddress() + addr;
+    //         // cout << physicalAddr << endl;
+    //         if (physicalAddr >= 0 && physicalAddr < memorySize && addr >= 0) { // && physicalAddr < pageSize) {
+    //             int value = memory[physicalAddr];
+    //             cout << addr << " " << value << endl;
+    //             return;
+    //         } else {
+    //             cout << "failure" << endl;
+    //             return;
+    //         }
+    //     }
+    //     h1 = h1 % size;
+    //     i++;
+    // }
+    // cout << "failure" << endl;
 }
 
 void SeparateChainingTable::printChain(int m) {
@@ -92,8 +141,8 @@ void SeparateChainingTable::printChain(int m) {
     }
 }
 
-void SeparateChainingTable::searchOrdered(int pidKey) {
-    int h1 = getPrimaryHash(pidKey);
+void SeparateChainingTable::searchOrdered(unsigned int pidKey) {
+    unsigned int h1 = getPrimaryHash(pidKey);
     for (int i = 0; i < table[h1].size(); i++) {
         if (table[h1][i].getPID() == pidKey) {
             cout << "found " << pidKey << " in " << h1 << endl;
@@ -103,8 +152,8 @@ void SeparateChainingTable::searchOrdered(int pidKey) {
     cout << "not found" << endl;
 }
 
-void SeparateChainingTable::deleteOrdered(int pidKey) {
-    int h1 = getPrimaryHash(pidKey);
+void SeparateChainingTable::deleteOrdered(unsigned int pidKey) {
+    unsigned int h1 = getPrimaryHash(pidKey);
     for (int i = 0; i < table[h1].size(); i++) {
         if (table[h1][i].getPID() == pidKey) {
             table[h1].erase(table[h1].begin() + i);
