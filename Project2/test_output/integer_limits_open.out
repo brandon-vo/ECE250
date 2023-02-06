@@ -5,17 +5,17 @@ success
 success
 success
 success
-failure
+success
+success
 success
 success
 failure
-success
-success
-0 -2147483647
-1 0
 failure
-1 -2147483647
+failure
+failure
+1 4321
+1 -1234
 0 2147483647
 1 2147483647
 0 -2147483648
-failure
+0 -1234
