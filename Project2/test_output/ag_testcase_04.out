@@ -8,15 +8,15 @@ found 9 in 3
 success
 found 4 in 2
 success
-failure
-failure
-failure
+success
+success
+success
 not found
 success
-found 1 in 1
-failure
 not found
-failure
+success
 not found
-failure
+success
+not found
+success
 not found

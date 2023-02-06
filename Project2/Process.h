@@ -8,7 +8,9 @@ private:
 public:
     Process(unsigned int pid, int startAddress);
     int getPID();
+    void setPID(unsigned int pid);
     int getStartAddress();
+    void setStartAddress(int startAddress);
 };
 
 #endif

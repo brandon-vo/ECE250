@@ -16,24 +16,22 @@ void OpenAddressingTable::insertDoubleHash(unsigned int pidKey) {
         cout << "failure" << endl;
         return;
     }
-    // if (table->size() == size) {
-    //     cout << "failure" << endl;
-    //     return;
-    // }
+
     unsigned int h1 = getPrimaryHash(pidKey);
     unsigned int h2 = getSecondaryHash(pidKey);
-    while (!table[h1].empty()) {
+    while (!table[h1].empty() && table[h1][0].getPID() != -1) {
         h1 = (h1 + h2) % size;
     }
 
     table[h1].push_back(Process(pidKey, h1));
+    // table[h1][0].setPID(pidKey);
     this->currentSize++;
     // cout << table[h1][0].getPID() << " " << table[h1][0].getStartAddress() << endl;
     cout << "success" << endl;
 }
 
 void OpenAddressingTable::writeMemoryOpen(unsigned int pidKey, int addr, int x) {
-        unsigned int h1 = getPrimaryHash(pidKey);
+    unsigned int h1 = getPrimaryHash(pidKey);
     auto &bucket = table[h1];
 
     for (auto &entry : bucket) {
@@ -93,7 +91,7 @@ void OpenAddressingTable::readMemoryOpen(unsigned int pidKey, int addr) {
         h = (h + h2) % size;
         i++;
     }
-    cout << "failure" << endl;
+    cout << "failure;ASDKL;ASDKA;LSD FIX THIS ISSUE WITH WRITING" << endl;
 }
 
 void OpenAddressingTable::searchOpen(unsigned int pidKey) {
@@ -101,6 +99,8 @@ void OpenAddressingTable::searchOpen(unsigned int pidKey) {
     unsigned int h2 = getSecondaryHash(pidKey);
     int i = 0;
     while (!table[h1].empty() && i < size) {
+        // TODO DEBUG THIS: GETPID IS GIVING -1
+        // cout << table[h1][0].getPID() << " " << pidKey << endl;
         if (table[h1][0].getPID() == pidKey) {
             cout << "found " << pidKey << " in " << h1 << endl;
             return;
@@ -117,9 +117,8 @@ void OpenAddressingTable::deleteOpen(unsigned int pidKey) {
     int i = 0;
     while (!table[h1].empty() && i < size) {
         if (table[h1][0].getPID() == pidKey) {
-            // table[h1].clear();
-            table[h1].erase(table[h1].begin());
-            // cout << table[h1][0].getPID() << endl;
+            // TODO delete the process from the table
+            table[h1][0].setPID(-1);
             this->currentSize--;
             cout << "success" << endl;
             return;
