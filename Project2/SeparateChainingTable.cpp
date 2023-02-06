@@ -44,24 +44,45 @@ void SeparateChainingTable::insertOrdered(unsigned int pidKey) {
 }
 
 void SeparateChainingTable::writeMemoryOrdered(unsigned int pidKey, int addr, int x) {
-    unsigned int h1 = getPrimaryHash(pidKey);
-    auto &bucket = table[h1];
 
-    for (auto &entry : bucket) {
-        if (entry.getPID() == pidKey) {
-            int physicalAddr = entry.getStartAddress() + addr;
-            // cout << entry.getStartAddress() << " " << addr << " " << physicalAddr << " " << size << " " << memorySize << endl;
-            // ag_02: write 5 3 4 -> physical = 4, size = 16 / 4 = 4 SUCCESS (getting failure)
-            // ag_09: write 4 4 2 -> physical = 4, size = 4 / 1 = 4 FAILURE
-            if (physicalAddr >= 0 && physicalAddr < memorySize && addr >= 0 && addr < pageSize) {
-                memory[physicalAddr] = x;
-                cout << "success" << endl;
-                return;
-            }
-        }
+    int h1 = getPrimaryHash(pidKey);
+    int i = 0;
+    while (!table[h1].empty() && table[h1][0].getPID() != pidKey && i < size) {
+        h1 = h1 % size;
+        i++;
     }
-    cout << "failure" << endl;
-    return;
+
+    int physicalAddr = table[h1][0].getStartAddress() + addr;
+
+    if (physicalAddr >= memorySize || physicalAddr < 0 || addr < 0 || addr >= pageSize) {
+        cout << "failure" << endl;
+        return;
+    }
+    
+    memory[physicalAddr] = x;
+    cout << "success" << endl;
+
+    // unsigned int h1 = getPrimaryHash(pidKey);
+    // auto &bucket = table[h1];
+
+    // for (auto &entry : bucket) {
+    //     if (entry.getPID() == pidKey) {
+    //         int physicalAddr = entry.getStartAddress() + addr;
+    //         // cout << entry.getStartAddress() << " " << addr << " " << physicalAddr << " " << size << " " << memorySize << endl;
+    //         // ag_02: write 5 3 4 -> physical = 4, size = 16 / 4 = 4 SUCCESS (getting failure)
+    //         // ag_09: write 4 4 2 -> physical = 4, size = 4 / 1 = 4 FAILURE
+    //         if (physicalAddr >= 0 && physicalAddr < memorySize && addr >= 0 && addr < pageSize) {
+    //             cout << memory[physicalAddr] << endl;
+    //             memory[physicalAddr] = x;
+    //             cout << memory[physicalAddr] << endl;
+    //             cout << "success" << endl;
+    //             return;
+    //         }
+    //     }
+    //     h1 = h1 % size;
+    // }
+    // cout << "failure" << endl;
+    // return;
 
     // int h1 = getPrimaryHash(pidKey);
     // int i = 0;
