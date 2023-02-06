@@ -35,7 +35,7 @@ void useOpenHashing() {
 
         } else if (command == "SEARCH") {
             cin >> pid;
-            openTable->searchKey(pid);
+            openTable->searchOpen(pid);
 
         } else if (command == "WRITE") {
             cin >> pid;
@@ -49,7 +49,7 @@ void useOpenHashing() {
             openTable->readMemoryOpen(pid, addr);
         } else if (command == "DELETE") {
             cin >> pid;
-            openTable->deleteKey(pid);
+            openTable->deleteOpen(pid);
 
             // END: Exit loop
         } else if (command == "END") {
@@ -87,7 +87,7 @@ void useOrderedHashing() {
 
         } else if (command == "SEARCH") {
             cin >> pid;
-            orderedTable->searchKey(pid);
+            orderedTable->searchOrdered(pid);
 
         } else if (command == "WRITE") {
             cin >> pid;
@@ -102,7 +102,7 @@ void useOrderedHashing() {
 
         } else if (command == "DELETE") {
             cin >> pid;
-            orderedTable->deleteKey(pid);
+            orderedTable->deleteOrdered(pid);
 
         } else if (command == "PRINT") {
             cin >> m;

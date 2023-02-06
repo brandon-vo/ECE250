@@ -13,6 +13,7 @@ using namespace std;
 class HashTable {
 protected:
     int size;               // Size of table (m)
+    int pageSize;           // Size of page (p)
     int currentSize;        // Current size of table
     int *memory;            // Memory array
     vector<Process> *table; // Vector of processes
@@ -21,8 +22,6 @@ public:
     ~HashTable();
     int getPrimaryHash(int pidKey) const;
     int getSecondaryHash(int pidKey) const;
-    void searchKey(int pidKey);
-    void deleteKey(int pidKey);
 };
 
 #endif

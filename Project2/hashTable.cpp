@@ -4,19 +4,21 @@
 
 #include "HashTable.h"
 #include "Process.h"
-#include <cmath>
 #include <iostream>
 #include <vector>
 using namespace std;
 
 HashTable::HashTable(int n, int p) {
     this->size = n / p;
+    this->pageSize = p;
     this->table = new vector<Process>[n / p];
     this->memory = new int[n];
 }
 
 HashTable::~HashTable() {
-    delete[] table;
+    // delete[] table;
+    table->clear();
+    table->shrink_to_fit();
     delete[] memory;
 }
 
@@ -25,31 +27,7 @@ int HashTable::getPrimaryHash(int pidKey) const {
 }
 
 int HashTable::getSecondaryHash(int pidKey) const {
-    int val = floor(pidKey / size);
+    int val = pidKey / size;
     // If even, add 1. If odd, return value.
     return ((val % size) % 2 == 0) ? val + 1 : val; // h2
-}
-
-void HashTable::searchKey(int pidKey) {
-    int h1 = getPrimaryHash(pidKey);
-    for (int i = 0; i < table[h1].size(); i++) {
-        if (table[h1][i].getPID() == pidKey) {
-            cout << "found " << pidKey << " in " << h1 << endl;
-            return;
-        }
-    }
-    cout << "not found" << endl;
-}
-
-void HashTable::deleteKey(int pidKey) {
-    int h1 = getPrimaryHash(pidKey);
-    for (int i = 0; i < table[h1].size(); i++) {
-        if (table[h1][i].getPID() == pidKey) {
-            table[h1].erase(table[h1].begin() + i);
-            this->currentSize--;
-            cout << "success" << endl;
-            return;
-        }
-    }
-    cout << "failure" << endl;
 }

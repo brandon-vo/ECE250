@@ -10,6 +10,7 @@ class OpenAddressingTable : public HashTable {
 public:
     OpenAddressingTable(int n, int p);
     void insertDoubleHash(int pidKey);
+    void searchOpen(int pidKey);
     void deleteOpen(int pidKey);
     void writeMemoryOpen(int pidKey, int addr, int x);
     void readMemoryOpen(int pidKey, int addr);

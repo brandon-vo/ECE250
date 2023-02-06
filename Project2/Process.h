@@ -8,6 +8,7 @@ private:
 public:
     Process(int pid, int startAddress);
     int getPID();
+    void setPID(int pid);
     int getStartAddress();
 };
 

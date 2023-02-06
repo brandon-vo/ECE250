@@ -27,6 +27,17 @@ void SeparateChainingTable::insertOrdered(int pidKey) {
         h1 = h1 % size;
         i++;
     }
+    // Find the correct position for the new process
+    for (int j = 0; j < table[h1].size(); j++) {
+        if (pidKey < table[h1][j].getPID()) {
+            table[h1].insert(table[h1].begin() + j, Process(pidKey, h1));
+            this->currentSize++;
+            cout << "success" << endl;
+            return;
+        }
+    }
+
+    // If no position is found, insert at the end
     table[h1].push_back(Process(pidKey, h1));
     this->currentSize++;
     cout << "success" << endl;
@@ -41,7 +52,7 @@ void SeparateChainingTable::writeMemoryOrdered(int pidKey, int addr, int x) {
     }
 
     if (i == size) {
-        cout << "PID " << pidKey << " not found." << endl;
+        cout << "failure" << endl;
         return;
     }
 
@@ -79,4 +90,28 @@ void SeparateChainingTable::printChain(int m) {
         }
         cout << endl;
     }
+}
+
+void SeparateChainingTable::searchOrdered(int pidKey) {
+    int h1 = getPrimaryHash(pidKey);
+    for (int i = 0; i < table[h1].size(); i++) {
+        if (table[h1][i].getPID() == pidKey) {
+            cout << "found " << pidKey << " in " << h1 << endl;
+            return;
+        }
+    }
+    cout << "not found" << endl;
+}
+
+void SeparateChainingTable::deleteOrdered(int pidKey) {
+    int h1 = getPrimaryHash(pidKey);
+    for (int i = 0; i < table[h1].size(); i++) {
+        if (table[h1][i].getPID() == pidKey) {
+            table[h1].erase(table[h1].begin() + i);
+            this->currentSize--;
+            cout << "success" << endl;
+            return;
+        }
+    }
+    cout << "failure" << endl;
 }

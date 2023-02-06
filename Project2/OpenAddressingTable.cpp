@@ -42,7 +42,7 @@ void OpenAddressingTable::writeMemoryOpen(int pidKey, int addr, int x) {
     }
 
     if (i == size) {
-        cout << "PID " << pidKey << " not found." << endl;
+        cout << "failure" << endl;
         return;
     }
 
@@ -73,6 +73,39 @@ void OpenAddressingTable::readMemoryOpen(int pidKey, int addr) {
             }
         }
         h = (h + h2) % size;
+        i++;
+    }
+    cout << "failure" << endl;
+}
+
+void OpenAddressingTable::searchOpen(int pidKey) {
+    int h1 = getPrimaryHash(pidKey);
+    int h2 = getSecondaryHash(pidKey);
+    int i = 0;
+    while (!table[h1].empty() && i < size) {
+        if (table[h1][0].getPID() == pidKey) {
+            cout << "found " << pidKey << " in " << h1 << endl;
+            return;
+        }
+        h1 = (h1 + h2) % size;
+        i++;
+    }
+    cout << "not found" << endl;
+}
+
+void OpenAddressingTable::deleteOpen(int pidKey) {
+    int h1 = getPrimaryHash(pidKey);
+    int h2 = getSecondaryHash(pidKey);
+    int i = 0;
+    while (!table[h1].empty() && i < size) {
+        if (table[h1][0].getPID() == pidKey) {
+            table[h1].clear();
+            // cout << table[h1][0].getPID() << endl;
+            this->currentSize--;
+            cout << "success" << endl;
+            return;
+        }
+        h1 = (h1 + h2) % size;
         i++;
     }
     cout << "failure" << endl;
