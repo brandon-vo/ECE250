@@ -117,7 +117,7 @@ void useOrderedHashing() {
 
 // Main function
 int main() {
-    string type; // OPEN or ORDERED
+    string type = ""; // OPEN or ORDERED
     cin >> type;
 
     if (type == "OPEN") {

@@ -20,3 +20,11 @@ int Process::getStartAddress() {
 void Process::setStartAddress(int startAddress) {
     this->startAddress = startAddress;
 }
+
+int Process::getPageNumber() {
+    return pageNumber;
+}
+
+void Process::setPageNumber(int pageNumber) {
+    this->pageNumber = pageNumber;
+}

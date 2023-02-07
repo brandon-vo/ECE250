@@ -32,62 +32,69 @@ void OpenAddressingTable::insertDoubleHash(unsigned int pidKey) {
 
 void OpenAddressingTable::writeMemoryOpen(unsigned int pidKey, int addr, int x) {
     // unsigned int h1 = getPrimaryHash(pidKey);
+    // unsigned int h2 = getSecondaryHash(pidKey);
     // auto &bucket = table[h1];
 
     // for (auto &entry : bucket) {
     //     if (entry.getPID() == pidKey) {
     //         int physicalAddr = entry.getStartAddress() + addr;
-    //         // cout << entry.getStartAddress() << " " << addr << " " << physicalAddr << " " << size << " " << memorySize << endl;
-    //         // ag_02: write 5 3 4 -> physical = 4, size = 16 / 4 = 4 SUCCESS (getting failure)
-    //         // ag_09: write 4 4 2 -> physical = 4, size = 4 / 1 = 4 FAILURE
     //         if (physicalAddr >= 0 && physicalAddr < memorySize && addr >= 0 && addr < pageSize) {
     //             memory[physicalAddr] = x;
     //             cout << "success" << endl;
     //             return;
     //         }
+    //     } else {
+    //         h1 = (h1 + h2) % size;
+    //         bucket = table[h1];
     //     }
     // }
-    unsigned int h = getPrimaryHash(pidKey);
-    unsigned int h2 = getSecondaryHash(pidKey);
-    int i = 0;
-    while (!table[h].empty() && i < size) {
-        if (table[h][0].getPID() == pidKey) {
-            int physicalAddr = table[h][0].getStartAddress() + addr;
-            if (physicalAddr >= 0 && physicalAddr < memorySize && addr >= 0 && addr < pageSize) { // && physicalAddr < pageSize) {
-                memory[physicalAddr] = x;
-                cout << "success" << endl;
-                return;
-            } else {
-                cout << "failure" << endl;
-                return;
-            }
-        }
-        h = (h + h2) % size;
-        i++;
-    }
-    cout << "failure" << endl;
-    return;
+
+    // cout << "failure" << endl;
+
     // unsigned int h1 = getPrimaryHash(pidKey);
     // unsigned int h2 = getSecondaryHash(pidKey);
     // int i = 0;
-    // while (!table[h1].empty() && table[h1][0].getPID() != pidKey && i < size) {
+    // while (!table[h1].empty() && i < size) {
+    //     if (table[h1][0].getPID() == pidKey) {
+    //         int physicalAddr = table[h1][0].getStartAddress() + addr;
+    //         // cout << physicalAddr << " " << memorySize << " " << addr << " " << pageSize << endl;
+    //         if (physicalAddr >= 0 && physicalAddr < memorySize && addr >= 0 && addr < pageSize) { // && physicalAddr < pageSize) {
+    //             memory[physicalAddr] = x;
+    //             cout << "success" << endl;
+    //             return;
+    //         } else {
+    //             cout << "failure" << endl;
+    //             return;
+    //         }
+    //     }
     //     h1 = (h1 + h2) % size;
     //     i++;
     // }
+    // cout << "failure" << endl;
+    // return;
 
-    // if (i == size) {
-    //     cout << "failure" << endl;
-    //     return;
-    // }
+    unsigned int h1 = getPrimaryHash(pidKey);
+    unsigned int h2 = getSecondaryHash(pidKey);
+    int i = 0;
+    while (!table[h1].empty() && table[h1][0].getPID() != pidKey && i < size) {
+        h1 = (h1 + h2) % size;
+        i++;
+    }
 
-    // if (table[h1][0].getStartAddress() + addr >= table[h1][0].getStartAddress() + table[h1][0].get() || addr < 0) {
-    //     cout << "Address out of range." << endl;
-    //     return;
-    // }
+    if (i == size || table[h1].empty()) {
+        cout << "failure" << endl;
+        return;
+    }
+
+    int physicalAddr = table[h1][0].getStartAddress() + addr;
+    if (physicalAddr >= memorySize || addr >= pageSize) { // && physicalAddr < pageSize) {        cout << "Address out of range." << endl;
+        cout << "failure" << endl;
+        return;
+    }
 
     // write value x to memory at address addr
-    // memory[table[h1][0].getStartAddress() + addr] = x;
-    // cout << "success" << endl;
+    memory[physicalAddr] = x;
+    cout << "success" << endl;
 }
 
 void OpenAddressingTable::readMemoryOpen(unsigned int pidKey, int addr) {
@@ -118,8 +125,6 @@ void OpenAddressingTable::searchOpen(unsigned int pidKey) {
     unsigned int h2 = getSecondaryHash(pidKey);
     int i = 0;
     while (!table[h1].empty() && i < size) {
-        // TODO DEBUG THIS: GETPID IS GIVING -1
-        // cout << table[h1][0].getPID() << " " << pidKey << endl;
         if (table[h1][0].getPID() == pidKey) {
             cout << "found " << pidKey << " in " << h1 << endl;
             return;
