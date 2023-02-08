@@ -4,17 +4,16 @@
 class Process {
 private:
     int pid;
-    int startAddress;
-    int pageNumber;
-
+    int physicalAddress;
+    int hash;
 public:
-    Process(unsigned int pid, int startAddress);
-    int getPID();
+    Process(unsigned int pid, int physicalAddress, int hash);
+    unsigned int getPID();
     void setPID(unsigned int pid);
-    int getStartAddress();
-    void setStartAddress(int startAddress);
-    int getPageNumber();
-    void setPageNumber(int pageNumber);
+    int getPhysicalAddress();
+    void setPhysicalAddress(int physicalAddress);
+    int getHash();
+    void setHash(int hash);
 };
 
 #endif

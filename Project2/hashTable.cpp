@@ -14,6 +14,7 @@ HashTable::HashTable(int n, int p) {
     this->pageSize = p;
     this->table = new vector<Process>[n / p];
     this->memory = new int[n];
+    this->currentSize = 0;
 }
 
 HashTable::~HashTable() {
