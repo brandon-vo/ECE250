@@ -8,46 +8,47 @@
 #include <vector>
 using namespace std;
 
-SeparateChainingTable::SeparateChainingTable(int n, int p) : HashTable(n, p) {}
+SeparateChainingTable::SeparateChainingTable(int n, int p) : HashTable(n, p) {
+    this->availablePages = new vector<int>;
+    for (int i = 0; i < (n / p); i++) {
+        this->availablePages->push_back(i);
+    }
+}
+
+SeparateChainingTable::~SeparateChainingTable() {
+    availablePages->clear();
+    delete availablePages;
+}
 
 void SeparateChainingTable::insertOrdered(unsigned int pidKey) {
-    if (this->currentSize == size) {
+    if (availablePages->size() == 0) {
         cout << "failure" << endl;
         return;
     }
     unsigned int h1 = getPrimaryHash(pidKey);
     auto &bucket = table[h1];
     auto iterator = begin(bucket);
-    // int pagesOccupied = floor(currentSize / pageSize);
-    int collided = 0;
     while (iterator != end(bucket) && iterator->getPID() <= pidKey) {
         if (iterator->getPID() == pidKey) {
             cout << "failure" << endl; // pidKey already exists
             return;
         }
-        if (iterator->getHash() == h1) {
-            collided++;
-            // cout << "pagesOccupied: " << pagesOccupied << endl;
-        }
         iterator++;
     }
-    // cout << pagesOccupied << endl;
-    int startAddress = h1 + (pageSize * collided);
-    // cout << "XXX : " << pidKey << " " << startAddress << " " << h1 << endl;
-    bucket.insert(iterator, Process(pidKey, startAddress, h1));
-
+    if (h1 >= pageSize) { // lower value to calculate start address
+        h1 = h1 - pageSize;
+    }
+    int startAddress = h1 + (availablePages->front() * pageSize);
+    if (startAddress % 2 == 1) { // if odd
+        startAddress--;          // make even
+    }
+    if (pageSize == 1) { // edge case
+        startAddress = h1;
+    }
+    bucket.insert(iterator, Process(pidKey, startAddress, h1, availablePages->front()));
+    availablePages->erase(availablePages->begin());
     this->currentSize++;
     cout << "success" << endl;
-    // cout << bucket[0].getPID() << " XXXX " << bucket[0].getStartddress() << endl;
-    // print for debugging
-    // for (int i = 0; i < size; i++) {
-    //     if (!table[i].empty()) {
-    //         for (int j = 0; j < table[i].size(); j++) {
-    //             cout << table[i][j].getPID() << " " << table[i][j].getStartAddress() << " -> ";
-    //         }
-    //     }
-    // }
-    // cout << endl;
 }
 
 void SeparateChainingTable::deleteOrdered(unsigned int pidKey) {
@@ -58,6 +59,7 @@ void SeparateChainingTable::deleteOrdered(unsigned int pidKey) {
         if (iterator->getPID() == pidKey) {
             iterator->setPID(0);
             iterator->setHash(-1);
+            availablePages->push_back(iterator->getPage());
             this->currentSize--;
             cout << "success" << endl;
             return;
@@ -82,29 +84,17 @@ void SeparateChainingTable::searchOrdered(unsigned int pidKey) {
 void SeparateChainingTable::writeMemoryOrdered(unsigned int pidKey, int addr, int x) {
     unsigned int h1 = getPrimaryHash(pidKey);
     auto &bucket = table[h1];
-    auto iterator = begin(bucket);
     if (bucket.size() == 0) {
         cout << "failure" << endl;
         return;
     }
-
+    auto iterator = begin(bucket);
     while (iterator != end(bucket)) {
         if (iterator->getPID() == pidKey) {
             int memoryAddress = iterator->getStartAddress() + addr;
-            // cout << "memoryAddress: " << memoryAddress << endl;
             if (memoryAddress < memorySize && addr >= 0 && addr < pageSize) {
-                // while (memory[memoryAddress] > 0) {
-                //     // cout << "OVERRIDING" << endl;
-                //     memoryAddress = memoryAddress + (pageSize * page);
-                //     page++;
-                // }
                 memory[memoryAddress] = x;
                 cout << "success" << endl;
-                // for (int i = 0; i < memorySize; i++) {
-                //     cout << memory[i] << " ";
-                // }
-                // 
-                // cout << "======== DONE WRITING " << memory[memoryAddress] << " TO ADDRESS " << memoryAddress << " | " << iterator->getPID() << " " << iterator->getStartAddress() << endl;
                 return;
             }
         }
@@ -122,15 +112,10 @@ void SeparateChainingTable::readMemoryOrdered(unsigned int pidKey, int addr) {
             int memoryAddress = iterator->getStartAddress() + addr;
             if (memoryAddress < memorySize && addr >= 0 && addr < pageSize) {
                 cout << addr << " " << memory[memoryAddress] << endl;
-                // for (int i = 0; i < memorySize; i++) {
-                //     cout << memory[i] << " ";
-                // }
-                // cout << "DONE READING " << memory[memoryAddress] << " " << memoryAddress << endl;
-                return;
             } else {
                 cout << "failure" << endl;
-                return;
             }
+            return;
         }
         iterator++;
     }

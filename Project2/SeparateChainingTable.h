@@ -7,8 +7,11 @@
 using namespace std;
 
 class SeparateChainingTable : public HashTable {
+private:
+    vector<int> *availablePages;
 public:
     SeparateChainingTable(int n, int p);
+    ~SeparateChainingTable();
     void insertOrdered(unsigned int pidKey);
     void searchOrdered(unsigned int pidKey);
     void writeMemoryOrdered(unsigned int pidKey, int addr, int x);

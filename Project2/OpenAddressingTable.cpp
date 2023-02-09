@@ -41,14 +41,14 @@ void OpenAddressingTable::insertOpen(unsigned int pidKey) {
 
     // Replace tombstone with new process
     if (tombstoneFound) {
-        table[tombstoneHash][0] = Process(pidKey, tombstoneHash, tombstoneHash);
+        table[tombstoneHash][0] = Process(pidKey, tombstoneHash, tombstoneHash, 1);
         cout << "success" << endl;
         this->currentSize++;
         return;
     }
 
     // Insert new process into table
-    table[h1].push_back(Process(pidKey, h1, h1));
+    table[h1].push_back(Process(pidKey, h1 * pageSize, h1, 1));
     cout << "success" << endl;
     this->currentSize++;
 }
@@ -107,9 +107,7 @@ void OpenAddressingTable::writeMemoryOpen(unsigned int pidKey, int addr, int x) 
         cout << "failure" << endl;
         return;
     }
-
     memory[memoryAddress] = x;
-
     cout << "success" << endl;
 }
 

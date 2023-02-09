@@ -6,14 +6,18 @@ private:
     unsigned int pid;
     int startAddress;
     int hash;
+    int page;
+
 public:
-    Process(unsigned int pid, int startAddress, int hash);
-    unsigned int getPID();
+    Process(unsigned int pid, int startAddress, int hash, int page);
     void setPID(unsigned int pid);
-    int getStartAddress();
+    unsigned int getPID();
     void setStartAddress(int startAddress);
-    int getHash();
+    int getStartAddress();
     void setHash(int hash);
+    int getHash();
+    void setPage(int pageSize);
+    int getPage();
 };
 
 #endif
