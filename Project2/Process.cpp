@@ -1,8 +1,8 @@
 #include "Process.h"
 
-Process::Process(unsigned int pid, int physicalAddress, int hash) {
+Process::Process(unsigned int pid, int startAddress, int hash) {
     this->pid = pid;
-    this->physicalAddress = physicalAddress;
+    this->startAddress = startAddress;
     this->hash = hash;
 }
 
@@ -14,12 +14,12 @@ void Process::setPID(unsigned int pid) {
     this->pid = pid;
 }
 
-int Process::getPhysicalAddress() {
-    return physicalAddress;
+int Process::getStartAddress() {
+    return startAddress;
 }
 
-void Process::setPhysicalAddress(int physicalAddress) {
-    this->physicalAddress = physicalAddress;
+void Process::setStartAddress(int startAddress) {
+    this->startAddress = startAddress;
 }
 
 int Process::getHash() {

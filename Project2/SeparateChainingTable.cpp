@@ -18,44 +18,32 @@ void SeparateChainingTable::insertOrdered(unsigned int pidKey) {
     unsigned int h1 = getPrimaryHash(pidKey);
     auto &bucket = table[h1];
     auto iterator = begin(bucket);
-    int pagesOccupied = 0;
-    while (iterator != end(bucket)) {
+    // int pagesOccupied = floor(currentSize / pageSize);
+    int collided = 0;
+    while (iterator != end(bucket) && iterator->getPID() <= pidKey) {
         if (iterator->getPID() == pidKey) {
             cout << "failure" << endl; // pidKey already exists
             return;
         }
-        // cout << iterator->getPID() << " ========== " << pidKey << endl;
-        // if (iterator->getPhysicalAddress() / pageSize == h1 && pageSize != 1) {
-        //     // cout << iterator->getPID() << " s " << endl;
-        //     pagesOccupied++;
-        // }
-        // cout << "iterator->getHash(): " << iterator->getHash() << endl;
         if (iterator->getHash() == h1) {
-            pagesOccupied++;
-            // cout << "PAGE OCCUPIED: " << pagesOccupied << endl;
-        }
-        if (iterator->getPID() > pidKey) {
-            // cout << "BREAK" << endl;
-            break;
+            collided++;
+            // cout << "pagesOccupied: " << pagesOccupied << endl;
         }
         iterator++;
     }
-    // cout << iterator->getHash() << " " << h1 << endl;
-    // cout << "pagesOccupied: " << pagesOccupied << endl;
-    int physicalAddress = h1 + (pageSize * pagesOccupied); // + (pagesOccupied * pageSize);// * pageSize + (pagesOccupied * pageSize);
-    // storedAddresses->push_back(physicalAddress);
-    // cout << pidKey << " " << physicalAddress << " " << pageSize << " " << pagesOccupied << endl;
-    bucket.insert(iterator, Process(pidKey, physicalAddress, h1));
-    // table[h1].insert(iterator, Process(pidKey, h1));
+    // cout << pagesOccupied << endl;
+    int startAddress = h1 + (pageSize * collided);
+    // cout << "XXX : " << pidKey << " " << startAddress << " " << h1 << endl;
+    bucket.insert(iterator, Process(pidKey, startAddress, h1));
 
     this->currentSize++;
     cout << "success" << endl;
-    // cout << bucket[0].getPID() << " XXXX " << bucket[0].getPhysicalAddress() << endl;
+    // cout << bucket[0].getPID() << " XXXX " << bucket[0].getStartddress() << endl;
     // print for debugging
     // for (int i = 0; i < size; i++) {
     //     if (!table[i].empty()) {
     //         for (int j = 0; j < table[i].size(); j++) {
-    //             cout << table[i][j].getPID() << " " << table[i][j].getPhysicalAddress() << " -> ";
+    //             cout << table[i][j].getPID() << " " << table[i][j].getStartAddress() << " -> ";
     //         }
     //     }
     // }
@@ -102,9 +90,8 @@ void SeparateChainingTable::writeMemoryOrdered(unsigned int pidKey, int addr, in
 
     while (iterator != end(bucket)) {
         if (iterator->getPID() == pidKey) {
-            int memoryAddress = iterator->getPhysicalAddress() + addr;
-            // cout << memoryAddress << " " << memorySize << " " << iterator->getPhysicalAddress() << " " << addr << endl;
-
+            int memoryAddress = iterator->getStartAddress() + addr;
+            // cout << "memoryAddress: " << memoryAddress << endl;
             if (memoryAddress < memorySize && addr >= 0 && addr < pageSize) {
                 // while (memory[memoryAddress] > 0) {
                 //     // cout << "OVERRIDING" << endl;
@@ -113,6 +100,11 @@ void SeparateChainingTable::writeMemoryOrdered(unsigned int pidKey, int addr, in
                 // }
                 memory[memoryAddress] = x;
                 cout << "success" << endl;
+                // for (int i = 0; i < memorySize; i++) {
+                //     cout << memory[i] << " ";
+                // }
+                // 
+                // cout << "======== DONE WRITING " << memory[memoryAddress] << " TO ADDRESS " << memoryAddress << " | " << iterator->getPID() << " " << iterator->getStartAddress() << endl;
                 return;
             }
         }
@@ -127,9 +119,13 @@ void SeparateChainingTable::readMemoryOrdered(unsigned int pidKey, int addr) {
     auto iterator = begin(bucket);
     while (iterator != end(bucket)) {
         if (iterator->getPID() == pidKey) {
-            int physicalAddr = iterator->getPhysicalAddress() + addr;
-            if (physicalAddr < memorySize && addr >= 0 && addr < pageSize) {
-                cout << addr << " " << memory[physicalAddr] << endl;
+            int memoryAddress = iterator->getStartAddress() + addr;
+            if (memoryAddress < memorySize && addr >= 0 && addr < pageSize) {
+                cout << addr << " " << memory[memoryAddress] << endl;
+                // for (int i = 0; i < memorySize; i++) {
+                //     cout << memory[i] << " ";
+                // }
+                // cout << "DONE READING " << memory[memoryAddress] << " " << memoryAddress << endl;
                 return;
             } else {
                 cout << "failure" << endl;

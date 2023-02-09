@@ -3,15 +3,15 @@
 
 class Process {
 private:
-    int pid;
-    int physicalAddress;
+    unsigned int pid;
+    int startAddress;
     int hash;
 public:
-    Process(unsigned int pid, int physicalAddress, int hash);
+    Process(unsigned int pid, int startAddress, int hash);
     unsigned int getPID();
     void setPID(unsigned int pid);
-    int getPhysicalAddress();
-    void setPhysicalAddress(int physicalAddress);
+    int getStartAddress();
+    void setStartAddress(int startAddress);
     int getHash();
     void setHash(int hash);
 };

@@ -10,85 +10,47 @@ using namespace std;
 
 OpenAddressingTable::OpenAddressingTable(int n, int p) : HashTable(n, p) {}
 
-void OpenAddressingTable::insertDoubleHash(unsigned int pidKey) {
+void OpenAddressingTable::insertOpen(unsigned int pidKey) {
+
+    // if the table is full, print failure and return
     if (this->currentSize == size) {
         cout << "failure" << endl;
         return;
     }
 
-    unsigned int h1 = getPrimaryHash(pidKey);
-    unsigned int h2 = getSecondaryHash(pidKey);
-    int pagesOccupied = 0;
-    while (!table[h1].empty() && table[h1][0].getPID() != 0) {
-        h1 = (h1 + h2) % size;
-        pagesOccupied++;
-    }
-
-    int physicalAddress = h1 + (pagesOccupied * pageSize);
-    table[h1].push_back(Process(pidKey, physicalAddress, h1));
-    table[h1][0].setPID(pidKey);
-    this->currentSize++;
-    // cout << table[h1][0].getPID() << " " << table[h1][0].getStartAddress() << endl;
-    cout << "success" << endl;
-
-    // // print for debugging
-    // for (int i = 0; i < size; i++) {
-    //     if (!table[i].empty()) {
-    //         for (unsigned int j = 0; j < table[i].size(); j++) {
-    //             cout << table[i][j].getPID() << " " << table[i][j].getPhysicalAddress() << " -> ";
-    //         }
-    //     }
-    // }
-    // cout << endl;
-}
-
-void OpenAddressingTable::writeMemoryOpen(unsigned int pidKey, int addr, int x) {
+    // Get the primary and secondary hash values
     unsigned int h1 = getPrimaryHash(pidKey);
     unsigned int h2 = getSecondaryHash(pidKey);
 
     int i = 0;
-    while (!table[h1].empty() && table[h1][0].getPID() != pidKey && i < size) {
-        h1 = (h1 + h2) % size;
-        i++;
-    }
-
-    if (i == size || table[h1].empty()) {
-        cout << "failure" << endl;
-        return;
-    }
-
-    int memoryAddress = table[h1][0].getPhysicalAddress() + addr;
-    if (memoryAddress >= memorySize || addr >= pageSize) { // && physicalAddr < pageSize) {        cout << "Address out of range." << endl;
-        cout << "failure" << endl;
-        return;
-    }
-    // cout << pidKey << " " << memoryAddress << " " << addr << " " << table[h1][0].getPhysicalAddress() << endl;
-    memory[memoryAddress] = x;
-    // cout << physicalAddr << " " << table[h1][0].getStartAddress() << " " << addr << endl;
-    cout << "success" << endl;
-}
-
-void OpenAddressingTable::readMemoryOpen(unsigned int pidKey, int addr) {
-    unsigned int h = getPrimaryHash(pidKey);
-    unsigned int h2 = getSecondaryHash(pidKey);
-    int i = 0;
-    while (!table[h].empty() && i < size) {
-        if (table[h][0].getPID() == pidKey) {
-            int physicalAddr = table[h][0].getPhysicalAddress() + addr;
-            if (physicalAddr >= 0 && physicalAddr < memorySize && addr >= 0 && addr < pageSize) { // && physicalAddr < pageSize) {
-                int value = memory[physicalAddr];
-                cout << addr << " " << value << endl;
-                return;
-            } else {
-                cout << "failure" << endl;
-                return;
-            }
+    bool tombstoneFound = false;
+    int tombstoneHash = 0;
+    // Using double hashing if collision occurs
+    while (!table[h1].empty() && i < size) {
+        if (table[h1][0].getPID() == pidKey) {
+            cout << "failure" << endl;
+            return;
+            // Mark that we found a tombstone. Used to continue checking if there is a duplicate pidKey in the table
+        } else if (table[h1][0].getPID() == 0 && !tombstoneFound) {
+            tombstoneFound = true;
+            tombstoneHash = h1;
         }
-        h = (h + h2) % size;
+        h1 = (h1 + h2) % size;
         i++;
     }
 
-    cout << "failure" << endl;
+    // Replace tombstone with new process
+    if (tombstoneFound) {
+        table[tombstoneHash][0] = Process(pidKey, tombstoneHash, tombstoneHash);
+        cout << "success" << endl;
+        this->currentSize++;
+        return;
+    }
+
+    // Insert new process into table
+    table[h1].push_back(Process(pidKey, h1, h1));
+    cout << "success" << endl;
+    this->currentSize++;
 }
 
 void OpenAddressingTable::searchOpen(unsigned int pidKey) {
@@ -111,15 +73,64 @@ void OpenAddressingTable::deleteOpen(unsigned int pidKey) {
     unsigned int h2 = getSecondaryHash(pidKey);
     int i = 0;
     while (!table[h1].empty() && i < size) {
+        // Found the process to 'delete'
         if (table[h1][0].getPID() == pidKey) {
-            // TODO delete the process from the table
-            table[h1][0].setPID(0);
-            this->currentSize--;
+            table[h1][0].setPID(0); // Set PID to 0 to indicate tombstone
+            this->currentSize--;    // Decrement current size
             cout << "success" << endl;
             return;
         }
         h1 = (h1 + h2) % size;
         i++;
     }
+    cout << "failure" << endl;
+}
+
+void OpenAddressingTable::writeMemoryOpen(unsigned int pidKey, int addr, int x) {
+    unsigned int h1 = getPrimaryHash(pidKey);
+    unsigned int h2 = getSecondaryHash(pidKey);
+
+    int i = 0;
+    // Using double hashing if collision occurs
+    while (!table[h1].empty() && table[h1][0].getPID() != pidKey && i < size) {
+        h1 = (h1 + h2) % size;
+        i++;
+    }
+
+    if (i == size || table[h1].empty()) {
+        cout << "failure" << endl;
+        return;
+    }
+
+    int memoryAddress = table[h1][0].getStartAddress() + addr;
+    if (memoryAddress >= memorySize || addr >= pageSize) {
+        cout << "failure" << endl;
+        return;
+    }
+
+    memory[memoryAddress] = x;
+
+    cout << "success" << endl;
+}
+
+void OpenAddressingTable::readMemoryOpen(unsigned int pidKey, int addr) {
+    unsigned int h1 = getPrimaryHash(pidKey);
+    unsigned int h2 = getSecondaryHash(pidKey);
+    int i = 0;
+    while (!table[h1].empty() && i < size) {
+        if (table[h1][0].getPID() == pidKey) {
+            int memoryAddress = table[h1][0].getStartAddress() + addr;
+            if (memoryAddress >= 0 && memoryAddress < memorySize && addr < pageSize) {
+                cout << addr << " " << memory[memoryAddress] << endl;
+                return;
+            } else {
+                cout << "failure" << endl;
+                return;
+            }
+        }
+        h1 = (h1 + h2) % size;
+        i++;
+    }
+
     cout << "failure" << endl;
 }

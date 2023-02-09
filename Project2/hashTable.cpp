@@ -8,6 +8,7 @@
 #include <vector>
 using namespace std;
 
+// Constructor
 HashTable::HashTable(int n, int p) {
     this->size = n / p;
     this->memorySize = n;
@@ -17,10 +18,9 @@ HashTable::HashTable(int n, int p) {
     this->currentSize = 0;
 }
 
+// Destructor
 HashTable::~HashTable() {
-    for (int i = 0; i < memorySize / pageSize; i++) {
-        table[i].clear();
-    }
+    table->clear();
     delete[] table;
     delete[] memory;
 }
