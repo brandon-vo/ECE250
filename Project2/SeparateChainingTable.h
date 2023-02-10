@@ -1,5 +1,9 @@
-#ifndef ORDERED_TABLE_H
-#define ORDERED_TABLE_H
+////////////////////////////////////
+// Brandon Vo - ECE 250 Project 2 //
+////////////////////////////////////
+
+#ifndef SEPARATE_CHAINING_TABLE_H
+#define SEPARATE_CHAINING_TABLE_H
 
 #include "HashTable.h"
 #include "Process.h"

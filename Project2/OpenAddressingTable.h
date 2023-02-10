@@ -1,9 +1,12 @@
-#ifndef OPEN_TABLE_H
-#define OPEN_TABLE_H
+////////////////////////////////////
+// Brandon Vo - ECE 250 Project 2 //
+////////////////////////////////////
+
+#ifndef OPEN_ADDRESSING_TABLE_H
+#define OPEN_ADDRESSING_TABLE_H
 
 #include "HashTable.h"
 #include "Process.h"
-#include <vector>
 using namespace std;
 
 class OpenAddressingTable : public HashTable {

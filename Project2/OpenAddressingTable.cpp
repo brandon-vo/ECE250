@@ -5,7 +5,6 @@
 #include "OpenAddressingTable.h"
 #include "Process.h"
 #include <iostream>
-#include <vector>
 using namespace std;
 
 OpenAddressingTable::OpenAddressingTable(int n, int p) : HashTable(n, p) {}

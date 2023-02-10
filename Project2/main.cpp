@@ -6,7 +6,6 @@
 #include "OpenAddressingTable.h"
 #include "SeparateChainingTable.h"
 #include <iostream>
-#include <vector>
 using namespace std;
 
 void useOpenHashing() {
@@ -46,9 +45,11 @@ void useOpenHashing() {
             cin >> pid;
             cin >> addr;
             openTable->readMemoryOpen(pid, addr);
+
         } else if (command == "DELETE") {
             cin >> pid;
             openTable->deleteOpen(pid);
+
         } else if (command == "END") {
             break;
         }

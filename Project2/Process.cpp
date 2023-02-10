@@ -1,3 +1,7 @@
+////////////////////////////////////
+// Brandon Vo - ECE 250 Project 2 //
+////////////////////////////////////
+
 #include "Process.h"
 
 Process::Process(unsigned int pid, int startAddress, int hash, int page) {

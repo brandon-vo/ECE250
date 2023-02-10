@@ -2,8 +2,8 @@
 // Brandon Vo - ECE 250 Project 2 //
 ////////////////////////////////////
 
-#ifndef HASHTABLE_H
-#define HASHTABLE_H
+#ifndef HASH_TABLE_H
+#define HASH_TABLE_H
 
 #include "Process.h"
 #include <cmath>
