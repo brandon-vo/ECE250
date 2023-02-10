@@ -25,10 +25,12 @@ HashTable::~HashTable() {
     delete[] memory;
 }
 
+// Get primary hash
 unsigned int HashTable::getPrimaryHash(unsigned int pidKey) const {
     return pidKey % size; // h1
 }
 
+// Get secondary hash
 unsigned int HashTable::getSecondaryHash(unsigned int pidKey) const {
     unsigned int val = pidKey / size;
     // If even, add 1. If odd, return value.

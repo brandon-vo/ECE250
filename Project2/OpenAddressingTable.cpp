@@ -10,6 +10,7 @@ using namespace std;
 
 OpenAddressingTable::OpenAddressingTable(int n, int p) : HashTable(n, p) {}
 
+// Insert a process into the table
 void OpenAddressingTable::insertOpen(unsigned int pidKey) {
 
     // if the table is full, print failure and return
@@ -53,6 +54,7 @@ void OpenAddressingTable::insertOpen(unsigned int pidKey) {
     this->currentSize++;
 }
 
+// Search for a process in the table
 void OpenAddressingTable::searchOpen(unsigned int pidKey) {
     unsigned int h1 = getPrimaryHash(pidKey);
     unsigned int h2 = getSecondaryHash(pidKey);
@@ -68,6 +70,7 @@ void OpenAddressingTable::searchOpen(unsigned int pidKey) {
     cout << "not found" << endl;
 }
 
+// Delete a process from the table
 void OpenAddressingTable::deleteOpen(unsigned int pidKey) {
     unsigned int h1 = getPrimaryHash(pidKey);
     unsigned int h2 = getSecondaryHash(pidKey);
@@ -86,6 +89,7 @@ void OpenAddressingTable::deleteOpen(unsigned int pidKey) {
     cout << "failure" << endl;
 }
 
+// Write to memory
 void OpenAddressingTable::writeMemoryOpen(unsigned int pidKey, int addr, int x) {
     unsigned int h1 = getPrimaryHash(pidKey);
     unsigned int h2 = getSecondaryHash(pidKey);
@@ -111,6 +115,7 @@ void OpenAddressingTable::writeMemoryOpen(unsigned int pidKey, int addr, int x) 
     cout << "success" << endl;
 }
 
+// Read from memory
 void OpenAddressingTable::readMemoryOpen(unsigned int pidKey, int addr) {
     unsigned int h1 = getPrimaryHash(pidKey);
     unsigned int h2 = getSecondaryHash(pidKey);

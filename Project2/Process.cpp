@@ -3,7 +3,6 @@
 Process::Process(unsigned int pid, int startAddress, int hash, int page) {
     this->pid = pid;
     this->startAddress = startAddress;
-    this->hash = hash;
     this->page = page;
 }
 
@@ -21,14 +20,6 @@ void Process::setStartAddress(int startAddress) {
 
 int Process::getStartAddress() {
     return startAddress;
-}
-
-void Process::setHash(int hash) {
-    this->hash = hash;
-}
-
-int Process::getHash() {
-    return hash;
 }
 
 void Process::setPage(int page) {

@@ -16,7 +16,7 @@ public:
     int getStartAddress();
     void setHash(int hash);
     int getHash();
-    void setPage(int pageSize);
+    void setPage(int page);
     int getPage();
 };
 
