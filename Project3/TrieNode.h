@@ -6,13 +6,24 @@
 using namespace std;
 
 class TrieNode {
-    // private:
+private:
+    // int numberOfWords;
+    // bool isEndOfWord;
     //     TrieNode* parent;
-    public:
-        vector<TrieNode*> character;
-        bool isEndOfWord;
-        TrieNode();
-        ~TrieNode();
+    TrieNode *next;
+
+public:
+    vector<TrieNode *> character;
+    int numberOfWords;
+    bool isEndOfWord;
+    TrieNode();
+    ~TrieNode();
+    bool hasMultipleChildren(TrieNode *node);
+    // bool hasMoreThanOneChild();
+    //     void setNumberOfWords(int numberOfWords);
+    //     int getNumberOfWords();
+    //     void setIsEndOfWord(bool isEndOfWord);
+    //     bool getIsEndOfWord();
 };
 
 #endif
