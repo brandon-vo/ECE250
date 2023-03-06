@@ -10,15 +10,22 @@ private:
     // int numberOfWords;
     // bool isEndOfWord;
     //     TrieNode* parent;
-    TrieNode *next;
+    // TrieNode *next;
 
 public:
     vector<TrieNode *> character;
-    int numberOfWords;
+    // char character;
+    // int numberOfWords;
     bool isEndOfWord;
+    int numberOfChildren;
     TrieNode();
     ~TrieNode();
-    bool hasMultipleChildren(TrieNode *node);
+    int getNumberOfChildren();
+    void incrementNumberOfChildren();
+    void decrementNumberOfChildren();
+    TrieNode *getChild(char c);
+    void setChild(char c, TrieNode *node);
+    // bool hasMultipleChildren(TrieNode *node);
     // bool hasMoreThanOneChild();
     //     void setNumberOfWords(int numberOfWords);
     //     int getNumberOfWords();

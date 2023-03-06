@@ -7,35 +7,35 @@ using namespace std;
 
 int main() {
     Trie myTrie;
-    ifstream fin("corpus.txt");
 
     string command;
-    string word;
-    string prefix;
+    string input;
     while (cin >> command) {
         if (command == "load") {
-            while (fin >> word) {
-                myTrie.insertWord(word, true);
+            ifstream fin("corpus.txt");
+            while (fin >> input) {
+                myTrie.insertWord(input, true);
             }
+            fin.close();
             cout << "success" << endl;
         } else if (command == "i") {
-            cin >> word;
+            cin >> input;
             try {
-                myTrie.insertWord(word);
+                myTrie.insertWord(input);
             } catch (illegal_exception &e) {
                 cout << e.what() << endl;
             }
         } else if (command == "c") {
-            cin >> prefix;
+            cin >> input;
             try {
-                myTrie.countWordsWithPrefix(prefix);
+                myTrie.countWordsWithPrefix(input);
             } catch (illegal_exception &e) {
                 cout << e.what() << endl;
             }
         } else if (command == "e") {
-            cin >> word;
+            cin >> input;
             try {
-                myTrie.removeWord(word);
+                myTrie.removeWord(input);
             } catch (illegal_exception &e) {
                 cout << e.what() << endl;
             }
@@ -43,8 +43,8 @@ int main() {
             // myTrie.printWords(myTrie.getRoot(), "");
             myTrie.printTrie();
         } else if (command == "spellcheck") {
-            cin >> word;
-            myTrie.spellCheck(word);
+            cin >> input;
+            myTrie.spellCheck(input);
         } else if (command == "empty") {
             myTrie.printIsEmpty();
         } else if (command == "clear") {

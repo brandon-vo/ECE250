@@ -2,11 +2,9 @@
 
 TrieNode::TrieNode() {
     this->isEndOfWord = false;
-    this->numberOfWords = 0;
-    character = vector<TrieNode *>(26, nullptr);
-    // for (int i = 0; i < 26; i++) {
-    //     this->children[i] = nullptr;
-    // }
+    // this->numberOfWords = 0;
+    this->numberOfChildren = 0;
+    character = vector<TrieNode *>(26);
 }
 
 TrieNode::~TrieNode() {
@@ -15,38 +13,23 @@ TrieNode::~TrieNode() {
     }
 }
 
-bool TrieNode::hasMultipleChildren(TrieNode *node) {
-    int numChildren = 0;
-    for (TrieNode *child : node->character) {
-        if (child != nullptr) {
-            numChildren++;
-        }
-    }
-    return numChildren > 1;
+int TrieNode::getNumberOfChildren() {
+    return numberOfChildren;
 }
 
-// bool TrieNode::hasMoreThanOneChild() {
-//     int count = 0;
-//     for (int i = 0; i < 26; i++) {
-//         if (character[i] != nullptr) {
-//             count++;
-//         }
-//     }
-//     return count > 1;
-// }
+void TrieNode::incrementNumberOfChildren() {
+    numberOfChildren++;
+}
 
-// void TrieNode::setNumberOfWords(int numberOfWords) {
-//     this->numberOfWords = numberOfWords;
-// }
+void TrieNode::decrementNumberOfChildren() {
+    numberOfChildren--;
+}
 
-// int TrieNode::getNumberOfWords() {
-//     return this->numberOfWords;
-// }
+TrieNode *TrieNode::getChild(char c) {
+    return character[c - 'A'];
+}
 
-// void TrieNode::setIsEndOfWord(bool isEndOfWord) {
-//     this->isEndOfWord = isEndOfWord;
-// }
-
-// bool TrieNode::getIsEndOfWord() {
-//     return this->isEndOfWord;
-// }
+void TrieNode::setChild(char c, TrieNode *node) {
+    character[c - 'A'] = node;
+    incrementNumberOfChildren();
+}

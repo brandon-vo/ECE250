@@ -9,9 +9,9 @@ using namespace std;
 class Trie {
 private:
     TrieNode *root;
+    // vector<TrieNode *> character;
     int numberOfWords;
-    vector<TrieNode *> character;
-    bool isEndOfWord;
+    // bool isEndOfWord;
     int countWords(TrieNode *node);
     void printWord(TrieNode *node, string word);
     void clearTrie(TrieNode *node);
