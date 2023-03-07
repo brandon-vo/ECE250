@@ -1,8 +1,6 @@
 #include "Trie.h"
 #include "illegal_exception.h"
 
-#include <iostream>
-
 using namespace std;
 
 Trie::Trie() {
@@ -16,22 +14,25 @@ Trie::~Trie() {
 
 void Trie::insertWord(string word, bool load) {
     TrieNode *current = root;
+
     for (int i = 0; i < word.length(); i++) {
         if (!isupper(word[i])) {
             throw illegal_exception();
         }
+
         int index = word[i] - 'A';
-        if (current->character[index] == nullptr) {
-            current->character[index] = new TrieNode();
-            // cout << "new node" << endl;
+
+        // cout << index << endl;
+        if (current->character[index].first == nullptr) {
+            // cout << "insert new node: " << word[i] << endl;
+            current->character[index].first = new TrieNode();
+        } else {
+            // cout << "already exists: " << word[i] << endl;
+            // current->character[index].second++;
         }
-        current->numberOfChildren++;
-        current = current->character[index];
-        // current->character[index]->incrementNumberOfChildren(); // increment the number of children for the parent node
-        // current->incrementNumberOfChildren(); // increment the number of children for the parent node
-        // cout << word[i] << " " << index << " " << current->numberOfChildren << endl;
+        current = current->character[index].first; // traverse
     }
-    // cout << node -> numberOfChildren << endl;
+
     if (current->isEndOfWord && !load) {
         // Word already exists in trie
         cout << "failure" << endl;
@@ -39,13 +40,58 @@ void Trie::insertWord(string word, bool load) {
     } else if (!current->isEndOfWord) {
         // Word does not exist in trie, insert it
         current->isEndOfWord = true;
-        // current->incrementNumberOfChildren(); // increment the number of children for the parent node
         numberOfWords++;
     }
     if (!load) {
         cout << "success" << endl;
     }
 }
+
+// void Trie::insertWord(string word, bool load) {
+//     TrieNode *current = root;
+//     TrieNode *parent = nullptr;
+//     for (int i = 0; i < word.length(); i++) {
+//         if (!isupper(word[i])) {
+//             throw illegal_exception();
+//         }
+//         int index = word[i] - 'A';
+//         bool alreadyExists = false;
+//         bool newChar = false;
+//         parent = current;
+//         // cout << "------------------" << endl;
+
+//         if (current->character[index].first == nullptr) {
+//             if (parent != nullptr) {
+//                 // cout << "increase" << endl;
+//                 // parent->childCount++;
+//                 // if (i < word.length() - 1) {
+//                 parent->character[index].second++;
+//                 cout << "parent increase: " << parent->character[index].second << " parent: " << parent->character[index].first << endl;
+//                 // }
+//                 // parent->getCharacter();
+//             }
+//             current->character[index].first = new TrieNode();
+//             cout << "new node for " << word[i] << " | ";
+//             // current->getCharacter();
+//             // newChar = true;
+//         }
+//         parent = current;
+//         current = current->character[index].first;
+//     }
+
+// if (current->isEndOfWord && !load) {
+//     // Word already exists in trie
+//     cout << "failure" << endl;
+//     return;
+// } else if (!current->isEndOfWord) {
+//     // Word does not exist in trie, insert it
+//     current->isEndOfWord = true;
+//     numberOfWords++;
+// }
+// if (!load) {
+//     cout << "success" << endl;
+// }
+// }
 
 void Trie::countWordsWithPrefix(string prefix) {
     TrieNode *node = root;
@@ -54,11 +100,11 @@ void Trie::countWordsWithPrefix(string prefix) {
             throw illegal_exception();
         }
         int index = prefix[i] - 'A';
-        if (node->character[index] == nullptr) {
+        if (node->character[index].first == nullptr) {
             cout << "not found" << endl;
             return;
         }
-        node = node->character[index];
+        node = node->character[index].first;
     }
 
     int count = countWords(node);
@@ -75,8 +121,8 @@ int Trie::countWords(TrieNode *node) {
         count++;
     }
     for (int i = 0; i < 26; i++) {
-        if (node->character[i] != nullptr) {
-            count += countWords(node->character[i]);
+        if (node->character[i].first != nullptr) {
+            count += countWords(node->character[i].first);
         }
     }
     return count;
@@ -85,36 +131,45 @@ int Trie::countWords(TrieNode *node) {
 void Trie::removeWord(string word) {
     TrieNode *current = root;
     bool notValid = false;
-    int maxChildCount = 0;
+    // int maxChildCount = 0;
+    // TrieNode *deleteNode = nullptr;
+    // int indexToDelete = 0;
     // Traverse the trie based on the characters in the word
     for (int i = 0; i < word.length(); i++) {
         if (!isupper(word[i])) {
             throw illegal_exception();
         }
-        int currentChildCount = current->numberOfChildren;
+        // int currentChildCount = current->numberOfChildren;
         int index = word[i] - 'A';
         // cout << word[i] << " " << current->numberOfChildren << endl;
         // cout << current->character[index]->getNumberOfChildren() << endl;
-        if (current->character[index] == nullptr) {
+        if (current->character[index].first == nullptr) {
             notValid = true; // Mark that the word is not in the trie.
             // Continue checking in case there is a non uppercase character later in the word
         } else {
             // current->numberOfChildren--;
-            current = current->character[index];
+            // cout << current->character[index].first << " -- " << current->character[index].second << endl;
+            // if (current->character[index].second == 0) {
+            //     // current->character[index].second = -1; // has been deleted
+            //     deleteNode = current;
+            //     indexToDelete = index;
+            // }
+            current = current->character[index].first;
         }
     }
     // cout << maxChildCount << endl;
-    if (notValid) {
+    if (notValid || !current->isEndOfWord) {
         cout << "failure" << endl;
         return;
     }
     // If we reach here, we have found a node corresponding to the last character of the word
-    if (current->isEndOfWord) {
-        // The word is in the trie, erase it
-        current->isEndOfWord = false;
-        numberOfWords--;
-        cout << "success" << endl;
-    }
+    // else if (current->isEndOfWord) {
+    // The word is in the trie, erase it
+    // deleteNode->character[indexToDelete].second = -1;
+    current->isEndOfWord = false;
+    numberOfWords--;
+    cout << "success" << endl;
+    // }
 }
 
 void Trie::printWord(TrieNode *node, string word) {
@@ -124,11 +179,11 @@ void Trie::printWord(TrieNode *node, string word) {
         // cout << " -- " << endl;
     }
     for (int i = 0; i < 26; i++) {
-        if (node->character[i] != nullptr) {
+        if (node->character[i].first != nullptr) {
             char ch = 'A' + i;
             string buildWord = word + ch;
-            // cout << ch << " " << node->character[i] << " " << node->numberOfChildren << " : # children" << endl;
-            printWord(node->character[i], buildWord);
+            // cout << ch << " " << node->character[i].first << " " << node->character[i].second << " -> # of children" << endl;
+            printWord(node->character[i].first, buildWord);
         }
     }
 }
@@ -158,13 +213,26 @@ void Trie::printIsEmpty() {
 
 void Trie::spellCheck(string word) {
     TrieNode *current = root;
+    // TrieNode *nodeWithError = nullptr;
     string suggestion = "";
+    // string suggestionError = "";
+    // bool foundDeleted = false;
 
     // Traverse the trie based on the characters in the word
     for (int i = 0; i < word.length(); i++) {
         int index = word[i] - 'A';
-        // cout << current->character[index] << " " << word[i] << endl;
-        if (current->character[index] == nullptr) {
+        // cout << current->character[index].first << " | " << current->character[index].second << " " << word[i] << " " << index << endl;
+        // if (current->character[index].second > 0) {
+        //     // cout << "found a split" << endl;
+        //     nodeWithError = current->character[index].first;
+        //     suggestionError = suggestion + word[i];
+        //     // cout << suggestionError << endl;
+        // }
+        // if (current->character[index].second == -1) {
+        //     foundDeleted = true;
+        // }
+        // cout << current->character[index].first << " " << word[i] << " " << index << endl;
+        if (current->character[index].first == nullptr) {
             // No words in the trie start with the given letters
             if (suggestion.length() > 0) {
                 printWord(current, suggestion);
@@ -172,7 +240,8 @@ void Trie::spellCheck(string word) {
             cout << endl;
             return;
         }
-        current = current->character[index];
+        current = current->character[index].first;
+        // cout << current << " " << word[i] << " " << index << endl;
         suggestion += word[i];
     }
 
@@ -181,63 +250,36 @@ void Trie::spellCheck(string word) {
         // The word is in the trie
         cout << "correct" << endl;
     } else {
+        // TrieNode * test = root;
+        // test = test->character[2];
+        // test = test->character[0];
+        // test = test->character[17];
+
+        // todo: fix current to point to last node that branches of deleted node
+        // todo: build suggestion string from root to new fixed current node
+
         // The word is not in the trie, suggest words
+        // cout << " test " << endl;
+        // if (nodeWithError != nullptr) {
+        //     // cout << "ok" << " " << nodeWithError << " " << suggestionError << endl;
+        //     printWord(nodeWithError, suggestionError);
+        // } else {
+        // if (foundDeleted) {
+        //     printWord(nodeWithError, suggestionError);
+
+        // } else {
         printWord(current, suggestion);
+        // }
+
         cout << endl;
     }
 }
 
-// void Trie::spellCheck(string word) {
-//     TrieNode *current = root;
-//     string suggestion = "";
-
-//     // Traverse the trie based on the characters in the word
-//     for (int i = 0; i < word.length(); i++) {
-//         int index = word[i] - 'A';
-//         // cout << index << endl;
-//         // cout << current->character[index] << endl;
-//         // cout << word[i] << " " << current->character[index] << endl;
-//         if (current->character[index] == nullptr) {
-//             // No words in the trie start with the given letters
-//             // cout << "hello" << endl;
-//             // printWord(current, suggestion);
-//             // cout << endl;
-//             // return;
-//             // cout << "suggestion :" << suggestion << endl;
-//             if (suggestion.length() > 0) {
-//                 printWord(current, suggestion);
-//             }
-//             cout << endl;
-//             return;
-//         }
-//         current = current->character[index];
-//         suggestion += word[i];
-//         // cout << current << " " << suggestion << endl;
-//     }
-//     // cout << word << " " << word.length() << " -- " << suggestion.length() << endl;
-//     // if (word.length() < suggestion.length()) {
-//     //     cout << "TEST suggestion :" << suggestion << endl;
-//     // }
-//     // If we reach here, we have found a node corresponding to the last character of the word
-//     if (current->isEndOfWord) {
-//         // The word is in the trie
-//         cout << "correct" << endl;
-//     } else {
-//         // The word is not in the trie, suggest words
-//         // cout << "hi" <<  " " << suggestion << endl;
-//         // cout << "suggest" << " " << suggestion << endl;;
-//         // if (suggestion != word) {
-//             printWord(current, suggestion);
-//         // }
-//         cout << endl;
-//     }
-// }
-
 void Trie::clearTrie(TrieNode *node) {
     for (int i = 0; i < 26; i++) {
-        if (node->character[i] != nullptr) {
-            delete node->character[i];
-            node->character[i] = nullptr;
+        if (node->character[i].first != nullptr) {
+            delete node->character[i].first;
+            node->character[i].first = nullptr;
         }
     }
     node->isEndOfWord = false;

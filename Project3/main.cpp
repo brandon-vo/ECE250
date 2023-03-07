@@ -10,6 +10,7 @@ int main() {
 
     string command;
     string input;
+
     while (cin >> command) {
         if (command == "load") {
             ifstream fin("corpus.txt");

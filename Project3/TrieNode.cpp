@@ -1,35 +1,29 @@
 #include "TrieNode.h"
 
+#include <iostream>
+
 TrieNode::TrieNode() {
+    this->parent = nullptr;
     this->isEndOfWord = false;
     // this->numberOfWords = 0;
-    this->numberOfChildren = 0;
-    character = vector<TrieNode *>(26);
+    this->childCount = 0;
+    character = vector<pair<TrieNode *, int>>(26, make_pair(nullptr, 0));
+    // character = vector<TrieNode *, int>[26];
+    // for (int i = 0; i < 26; i++) {
+    //     character[i] = nullptr;
+    // }
 }
 
 TrieNode::~TrieNode() {
-    for (int i = 0; i < 26; i++) {
-        delete character[i];
+    for (int i = 0; i < character.size(); i++) {
+        delete character[i].first;
     }
 }
 
-int TrieNode::getNumberOfChildren() {
-    return numberOfChildren;
-}
-
-void TrieNode::incrementNumberOfChildren() {
-    numberOfChildren++;
-}
-
-void TrieNode::decrementNumberOfChildren() {
-    numberOfChildren--;
-}
-
-TrieNode *TrieNode::getChild(char c) {
-    return character[c - 'A'];
-}
-
-void TrieNode::setChild(char c, TrieNode *node) {
-    character[c - 'A'] = node;
-    incrementNumberOfChildren();
+void TrieNode::getCharacter() {
+    for (const auto& p : character) {
+        if (p.first != nullptr) {
+            // cout << (char)(p.first->character - 'A') << endl;
+        }
+    }
 }
