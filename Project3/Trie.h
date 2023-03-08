@@ -1,3 +1,7 @@
+////////////////////////////////////
+// Brandon Vo - ECE 250 Project 3 //
+////////////////////////////////////
+
 #ifndef TRIE_H
 #define TRIE_H
 
@@ -16,7 +20,7 @@ public:
     Trie();
     ~Trie();
     void insertWord(string word, bool load = false);
-    void removeWord(TrieNode *node, string word, string wordCopy, bool nullFound = false, bool isDeleting = false);
+    void eraseWord(TrieNode *node, string word, string wordCopy, bool nullFound = false, bool isDeleting = false);
     void countWords(string prefix);
     void printWord(TrieNode *node, string word);
     void spellCheck(string word);

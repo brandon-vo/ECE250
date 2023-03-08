@@ -1,3 +1,7 @@
+////////////////////////////////////
+// Brandon Vo - ECE 250 Project 3 //
+////////////////////////////////////
+
 #include "Trie.h"
 #include "illegal_exception.h"
 #include <fstream>
@@ -6,10 +10,11 @@
 using namespace std;
 
 int main() {
-    Trie myTrie;
-    string command;
-    string input;
+    Trie myTrie;    // Create a trie
+    string command; // Command to be executed
+    string input;   // Input parameter
 
+    // Read in commands
     while (cin >> command) {
         if (command == "load") {
             ifstream fin("corpus.txt");
@@ -35,7 +40,7 @@ int main() {
         } else if (command == "e") {
             cin >> input;
             try {
-                myTrie.removeWord(myTrie.getRoot(), input, input);
+                myTrie.eraseWord(myTrie.getRoot(), input, input);
             } catch (illegal_exception &e) {
                 cout << e.what() << endl;
             }
