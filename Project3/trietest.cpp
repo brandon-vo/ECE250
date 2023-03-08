@@ -7,7 +7,6 @@ using namespace std;
 
 int main() {
     Trie myTrie;
-
     string command;
     string input;
 
@@ -29,29 +28,40 @@ int main() {
         } else if (command == "c") {
             cin >> input;
             try {
-                myTrie.countWordsWithPrefix(input);
+                myTrie.countWords(input);
             } catch (illegal_exception &e) {
                 cout << e.what() << endl;
             }
         } else if (command == "e") {
             cin >> input;
             try {
-                myTrie.removeWord(input);
+                myTrie.removeWord(myTrie.getRoot(), input, input);
             } catch (illegal_exception &e) {
                 cout << e.what() << endl;
             }
         } else if (command == "p") {
-            // myTrie.printWords(myTrie.getRoot(), "");
-            myTrie.printTrie();
+            // myTrie.printTrie();
+            if (myTrie.getNumberOfWords() == 0) {
+                continue;
+            } else {
+                myTrie.printWord(myTrie.getRoot(), "");
+                cout << endl;
+            }
         } else if (command == "spellcheck") {
             cin >> input;
             myTrie.spellCheck(input);
         } else if (command == "empty") {
-            myTrie.printIsEmpty();
+            if (myTrie.getNumberOfWords() == 0) {
+                cout << "empty 1" << endl;
+            } else {
+                cout << "empty 0" << endl;
+            }
         } else if (command == "clear") {
-            myTrie.clear();
+            myTrie.clearTrie(myTrie.getRoot());
+            myTrie.setNumberOfWords(0);
+            cout << "success" << endl;
         } else if (command == "size") {
-            myTrie.printWordCount();
+            cout << "number of words is " << myTrie.getNumberOfWords() << endl;
         } else if (command == "exit") {
             break;
         }
