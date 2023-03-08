@@ -90,64 +90,66 @@ int Trie::countWordsUtil(TrieNode *node) {
     return count;
 }
 
-void Trie::eraseWord(TrieNode *node, string word, string deleteWord, bool nullFound, bool isDeleting) {
-    if (!isDeleting) {
-        // Check if start of word is uppercase
-        if (!isupper(word[0])) {
-            throw illegal_exception();
+// Erase a word from the trie
+void Trie::eraseWord(TrieNode *node, string word, string deleteWord, bool nullFound) {
+    // Check if start of word is uppercase
+    if (!isupper(word[0])) {
+        throw illegal_exception();
+    }
+
+    int index = word[0] - 'A'; // Get index of character from 0-25
+
+    // Set flag and continue checking incase there is a non uppercase character later in the string
+    // This is so we can throw the illegal exception if needed
+    if (node->character[index] == nullptr) {
+        nullFound = true;
+    }
+
+    word = word.substr(1); // Slice first character
+
+    if (word.length() > 0) { // Continue traversing
+        if (!nullFound) {    // Path exists
+            node = node->character[index];
         }
-
-        int index = word[0] - 'A'; // Get index of character from 0-25
-
-        // Set flag and continue checking incase there is a non uppercase character later in the string
-        // This is so we can throw the illegal exception if needed
-        if (node->character[index] == nullptr) {
-            nullFound = true;
-        }
-
-        word = word.substr(1); // Slice first character
-
-        if (word.length() > 0) { // Continue traversing
-            if (!nullFound) {    // Path exists
-                node = node->character[index];
-            }
-            eraseWord(node, word, deleteWord, nullFound);
-        } else {             // Reached end of word
-            if (nullFound) { // Path doesn't exist
-                cout << "failure" << endl;
-                return;
-            }
-            if (node->character[index]->isEndOfWord) {       // Word exists in trie
-                node->character[index]->isEndOfWord = false; // Mark node as not end of word
-
-                // Check if node has any children, then delete node and traverse back up to parent
-                if (!hasChildren(node->character[index])) {
-                    delete node->character[index];
-                    node->character[index] = nullptr;
-                    node = node->parent;
-                    eraseWord(node, word, deleteWord, nullFound, true); // Recursive call
-                }
-                numberOfWords--;
-                cout << "success" << endl;
-                return;
-            }
-            // Word doesn't exist in trie
+        eraseWord(node, word, deleteWord, nullFound);
+    } else {             // Reached end of word
+        if (nullFound) { // Path doesn't exist
             cout << "failure" << endl;
-        }
-    } else { // Traversing back up the tree
-        if (deleteWord.length() == 1) {
             return;
         }
-        deleteWord.pop_back();                                 // Remove last character
-        int index = deleteWord[deleteWord.length() - 1] - 'A'; // Get index of character from 0-25
+        if (node->character[index]->isEndOfWord) {       // Word exists in trie
+            node->character[index]->isEndOfWord = false; // Mark node as not end of word
 
-        // Delete node then traverse back up to parent
-        if (!hasChildren(node->character[index]) && !node->character[index]->isEndOfWord) {
-            delete node->character[index];
-            node->character[index] = nullptr;
-            node = node->parent;
-            eraseWord(node, word, deleteWord, nullFound, true); // Recursive call
+            // Check if node has any children, then delete node and traverse back up to parent
+            if (!hasChildren(node->character[index])) {
+                delete node->character[index]; // Remove the last node in the word
+                node->character[index] = nullptr;
+                node = node->parent;                   // Traverse back up to parent
+                eraseRemainingNodes(node, deleteWord); // Recursive call to delete the rest of the nodes with no children
+            }
+            numberOfWords--;
+            cout << "success" << endl;
+            return;
         }
+        // Word doesn't exist in trie
+        cout << "failure" << endl;
+    }
+}
+
+// Traverse back up the tree and delete nodes that are no longer needed
+void Trie::eraseRemainingNodes(TrieNode *node, string deleteWord) {
+    if (deleteWord.length() == 1) {
+        return;
+    }
+    deleteWord.pop_back();                                 // Remove last character
+    int index = deleteWord[deleteWord.length() - 1] - 'A'; // Get index of character from 0-25
+
+    // Delete node then traverse back up to parent
+    if (!hasChildren(node->character[index]) && !node->character[index]->isEndOfWord) {
+        delete node->character[index];
+        node->character[index] = nullptr;
+        node = node->parent;
+        eraseRemainingNodes(node, deleteWord); // Recursive call
     }
 }
 
@@ -212,11 +214,7 @@ void Trie::clearTrie(TrieNode *node) {
             node->character[i] = nullptr;
         }
     }
-}
-
-// Set the number of words in the trie
-void Trie::setNumberOfWords(int num) {
-    numberOfWords = num;
+    this->numberOfWords = 0;
 }
 
 // Get the number of words in the trie
