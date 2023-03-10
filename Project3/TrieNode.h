@@ -6,7 +6,6 @@
 #define TRIENODE_H
 
 #include <iostream>
-using namespace std;
 
 class TrieNode {
 public:

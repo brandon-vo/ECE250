@@ -5,8 +5,6 @@
 #include "Trie.h"
 #include "illegal_exception.h"
 
-using namespace std;
-
 // Constructor
 Trie::Trie() {
     root = new TrieNode();
@@ -25,6 +23,7 @@ void Trie::insertWord(string word, bool load) {
     for (int i = 0; i < word.length(); i++) {
         // Check if character is uppercase
         if (!isupper(word[i])) {
+            clearTrie();
             throw illegal_exception();
         }
 
@@ -54,21 +53,21 @@ void Trie::insertWord(string word, bool load) {
 }
 
 // Count words with a given prefix in the trie
-void Trie::countWords(string prefix) {
+void Trie::countPrefix(string prefix) {
     TrieNode *node = root;
     for (int i = 0; i < prefix.length(); i++) {
         // Check if character is uppercase
         if (!isupper(prefix[i])) {
             throw illegal_exception();
         }
-        int index = prefix[i] - 'A';             // Get index of character from 0-25
+        int index = prefix[i] - 'A'; // Get index of character from 0-25
         if (node->character[index] == nullptr) { // Path doesn't exist
             cout << "not found" << endl;
             return;
         }
         node = node->character[index]; // Traverse
     }
-    int count = countWordsUtil(node); // Count words in trie
+    int count = countRecursive(node); // Count words in trie
     if (count > 0) {
         cout << "count is " << count << endl;
     } else {
@@ -77,14 +76,14 @@ void Trie::countWords(string prefix) {
 }
 
 // Recursive function to count words in the trie
-int Trie::countWordsUtil(TrieNode *node) {
+int Trie::countRecursive(TrieNode *node) {
     int count = 0;
     if (node->isEndOfWord) {
         count++;
     }
     for (int i = 0; i < 26; i++) {
         if (node->character[i] != nullptr) {
-            count += countWordsUtil(node->character[i]);
+            count += countRecursive(node->character[i]);
         }
     }
     return count;
@@ -119,7 +118,7 @@ void Trie::eraseWord(TrieNode *node, string word, string deleteWord, bool nullFo
         }
         if (node->character[index]->isEndOfWord) {       // Word exists in trie
             node->character[index]->isEndOfWord = false; // Mark node as not end of word
-
+            numberOfWords--;                             // Decrement number of words counter in trie
             // Check if node has any children, then delete node and traverse back up to parent
             if (!hasChildren(node->character[index])) {
                 delete node->character[index]; // Remove the last node in the word
@@ -127,7 +126,6 @@ void Trie::eraseWord(TrieNode *node, string word, string deleteWord, bool nullFo
                 node = node->parent;                   // Traverse back up to parent
                 eraseRemainingNodes(node, deleteWord); // Recursive call to delete the rest of the nodes with no children
             }
-            numberOfWords--;
             cout << "success" << endl;
             return;
         }
@@ -141,6 +139,7 @@ void Trie::eraseRemainingNodes(TrieNode *node, string deleteWord) {
     if (deleteWord.length() == 1) {
         return;
     }
+
     deleteWord.pop_back();                                 // Remove last character
     int index = deleteWord[deleteWord.length() - 1] - 'A'; // Get index of character from 0-25
 
@@ -206,12 +205,12 @@ void Trie::spellCheck(string word) {
     }
 }
 
-// Delete the trie
-void Trie::clearTrie(TrieNode *node) {
+// Clear the trie
+void Trie::clearTrie() {
     for (int i = 0; i < 26; i++) {
-        if (node->character[i] != nullptr) {
-            delete node->character[i];
-            node->character[i] = nullptr;
+        if (root->character[i] != nullptr) {
+            delete root->character[i];
+            root->character[i] = nullptr;
         }
     }
     this->numberOfWords = 0;

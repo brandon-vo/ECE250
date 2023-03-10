@@ -23,7 +23,7 @@ int main() {
             }
             fin.close();
             cout << "success" << endl;
-        } else if (command == "i") { // O(n) - n is the length of the word
+        } else if (command == "i") {
             cin >> input;
             try {
                 myTrie.insertWord(input);
@@ -33,7 +33,7 @@ int main() {
         } else if (command == "c") {
             cin >> input;
             try {
-                myTrie.countWords(input);
+                myTrie.countPrefix(input);
             } catch (illegal_exception &e) {
                 cout << e.what() << endl;
             }
@@ -45,7 +45,6 @@ int main() {
                 cout << e.what() << endl;
             }
         } else if (command == "p") {
-            // myTrie.printTrie();
             if (myTrie.getNumberOfWords() == 0) {
                 continue;
             } else {
@@ -55,16 +54,12 @@ int main() {
         } else if (command == "spellcheck") {
             cin >> input;
             myTrie.spellCheck(input);
-        } else if (command == "empty") { // O(1)
-            if (myTrie.getNumberOfWords() == 0) {
-                cout << "empty 1" << endl;
-            } else {
-                cout << "empty 0" << endl;
-            }
-        } else if (command == "clear") { //
-            myTrie.clearTrie(myTrie.getRoot());
+        } else if (command == "empty") {
+            cout << "empty " << (myTrie.getNumberOfWords() == 0) << endl;
+        } else if (command == "clear") {
+            myTrie.clearTrie();
             cout << "success" << endl;
-        } else if (command == "size") { // O(1)
+        } else if (command == "size") {
             cout << "number of words is " << myTrie.getNumberOfWords() << endl;
         } else if (command == "exit") {
             break;

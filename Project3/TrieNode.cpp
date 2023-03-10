@@ -18,6 +18,8 @@ TrieNode::TrieNode() {
 // Destructor
 TrieNode::~TrieNode() {
     for (int i = 0; i < 26; i++) {
-        delete character[i];
+        if (character[i] != nullptr) {
+            delete character[i];
+        }
     }
 }

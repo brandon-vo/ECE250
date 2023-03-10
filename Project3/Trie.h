@@ -14,7 +14,7 @@ private:
     TrieNode *root;
     int numberOfWords;
     bool hasChildren(TrieNode *node);
-    int countWordsUtil(TrieNode *node);
+    int countRecursive(TrieNode *node);
     void eraseRemainingNodes(TrieNode *node, string word);
 
 public:
@@ -22,10 +22,10 @@ public:
     ~Trie();
     void insertWord(string word, bool load = false);
     void eraseWord(TrieNode *node, string word, string wordCopy, bool nullFound = false);
-    void countWords(string prefix);
+    void countPrefix(string prefix);
     void printWord(TrieNode *node, string word);
     void spellCheck(string word);
-    void clearTrie(TrieNode *node);
+    void clearTrie();
     int getNumberOfWords();
     TrieNode *getRoot();
 };
