@@ -33,7 +33,7 @@ int main() {
         } else if (command == "c") {
             cin >> input;
             try {
-                myTrie.countPrefix(input);
+                myTrie.getPrefixCount(input);
             } catch (illegal_exception &e) {
                 cout << e.what() << endl;
             }

@@ -28,11 +28,12 @@ void Trie::insertWord(string word, bool load) {
         }
         int index = word[i] - 'A'; // Get index of character from 0-25
         if (current->character[index] == nullptr) {
-            foundDuplicateWord = false;
-        } else if (foundDuplicateWord) {
+            foundDuplicateWord = false;  // If we found a null node, we know we haven't found a duplicate word
+        } else if (foundDuplicateWord) { // If we found a duplicate word, we don't need to continue checking nodes
             current = current->character[index];
         }
     }
+    // Duplicate word found. Don't insert word
     if (current->isEndOfWord && foundDuplicateWord) {
         if (!load) {
             cout << "failure" << endl;
@@ -67,26 +68,6 @@ void Trie::insertWord(string word, bool load) {
     if (!load) {
         cout << "success" << endl;
     }
-}
-
-// Count words with a given prefix in the Trie
-void Trie::countPrefix(string prefix) {
-
-    TrieNode *current = root;
-
-    for (int i = 0; i < prefix.length(); i++) {
-        // Check if character is uppercase
-        if (!isupper(prefix[i])) {
-            throw illegal_exception();
-        }
-        int index = prefix[i] - 'A';                // Get index of character from 0-25
-        if (current->character[index] == nullptr) { // Path doesn't exist
-            cout << "not found" << endl;
-            return;
-        }
-        current = current->character[index]; // Traverse
-    }
-    cout << "count is " << current->counter << endl; // Print number of words with prefix
 }
 
 // Erase a word from the trie
@@ -219,6 +200,26 @@ void Trie::clearTrie() {
         }
     }
     this->numberOfWords = 0;
+}
+
+// Get the number of words that start with a given prefix
+void Trie::getPrefixCount(string prefix) {
+
+    TrieNode *current = root;
+
+    for (int i = 0; i < prefix.length(); i++) {
+        // Check if character is uppercase
+        if (!isupper(prefix[i])) {
+            throw illegal_exception();
+        }
+        int index = prefix[i] - 'A';                // Get index of character from 0-25
+        if (current->character[index] == nullptr) { // Path doesn't exist
+            cout << "not found" << endl;
+            return;
+        }
+        current = current->character[index]; // Traverse
+    }
+    cout << "count is " << current->counter << endl; // Print number of words with prefix
 }
 
 // Get the number of words in the trie

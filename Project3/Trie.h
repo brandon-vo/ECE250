@@ -21,10 +21,10 @@ public:
     ~Trie();
     void insertWord(string word, bool load = false);
     void eraseWord(TrieNode *node, string word, string wordCopy, bool nullFound = false);
-    void countPrefix(string prefix);
     void printWord(TrieNode *node, string word);
     void spellCheck(string word);
     void clearTrie();
+    void getPrefixCount(string prefix);
     int getNumberOfWords();
     TrieNode *getRoot();
 };
