@@ -19,13 +19,29 @@ Trie::~Trie() {
 // Insert a word into the trie
 void Trie::insertWord(string word, bool load) {
     TrieNode *current = root;
-
+    bool foundDuplicateWord = true;
+    // Check if character is uppercase
+    // Do this separately from the insertion loop so we prevent nodes before the illegal character from being created
     for (int i = 0; i < word.length(); i++) {
-        // Check if character is uppercase
         if (!isupper(word[i])) {
-            clearTrie();
             throw illegal_exception();
         }
+        int index = word[i] - 'A'; // Get index of character from 0-25
+        if (current->character[index] == nullptr) {
+            foundDuplicateWord = false;
+        } else if (foundDuplicateWord) {
+            current = current->character[index];
+        }
+    }
+    if (current->isEndOfWord && foundDuplicateWord) {
+        if (!load) {
+            cout << "failure" << endl;
+        }
+        return;
+    }
+    current = root;
+
+    for (int i = 0; i < word.length(); i++) {
 
         int index = word[i] - 'A'; // Get index of character from 0-25
 
@@ -35,6 +51,7 @@ void Trie::insertWord(string word, bool load) {
             current->character[index]->parent = current; // Set parent
         }
         current = current->character[index]; // Traverse
+        current->counter++;                  // Increment counter
     }
 
     if (current->isEndOfWord && !load) {
@@ -52,41 +69,24 @@ void Trie::insertWord(string word, bool load) {
     }
 }
 
-// Count words with a given prefix in the trie
+// Count words with a given prefix in the Trie
 void Trie::countPrefix(string prefix) {
-    TrieNode *node = root;
+
+    TrieNode *current = root;
+
     for (int i = 0; i < prefix.length(); i++) {
         // Check if character is uppercase
         if (!isupper(prefix[i])) {
             throw illegal_exception();
         }
-        int index = prefix[i] - 'A'; // Get index of character from 0-25
-        if (node->character[index] == nullptr) { // Path doesn't exist
+        int index = prefix[i] - 'A';                // Get index of character from 0-25
+        if (current->character[index] == nullptr) { // Path doesn't exist
             cout << "not found" << endl;
             return;
         }
-        node = node->character[index]; // Traverse
+        current = current->character[index]; // Traverse
     }
-    int count = countRecursive(node); // Count words in trie
-    if (count > 0) {
-        cout << "count is " << count << endl;
-    } else {
-        cout << "not found" << endl;
-    }
-}
-
-// Recursive function to count words in the trie
-int Trie::countRecursive(TrieNode *node) {
-    int count = 0;
-    if (node->isEndOfWord) {
-        count++;
-    }
-    for (int i = 0; i < 26; i++) {
-        if (node->character[i] != nullptr) {
-            count += countRecursive(node->character[i]);
-        }
-    }
-    return count;
+    cout << "count is " << current->counter << endl; // Print number of words with prefix
 }
 
 // Erase a word from the trie
@@ -119,10 +119,13 @@ void Trie::eraseWord(TrieNode *node, string word, string deleteWord, bool nullFo
         if (node->character[index]->isEndOfWord) {       // Word exists in trie
             node->character[index]->isEndOfWord = false; // Mark node as not end of word
             numberOfWords--;                             // Decrement number of words counter in trie
+            node->character[index]->counter--;           // Decrement counter
             // Check if node has any children, then delete node and traverse back up to parent
             if (!hasChildren(node->character[index])) {
                 delete node->character[index]; // Remove the last node in the word
                 node->character[index] = nullptr;
+            }
+            if (node != root) {
                 node = node->parent;                   // Traverse back up to parent
                 eraseRemainingNodes(node, deleteWord); // Recursive call to delete the rest of the nodes with no children
             }
@@ -136,20 +139,22 @@ void Trie::eraseWord(TrieNode *node, string word, string deleteWord, bool nullFo
 
 // Traverse back up the tree and delete nodes that are no longer needed
 void Trie::eraseRemainingNodes(TrieNode *node, string deleteWord) {
-    if (deleteWord.length() == 1) {
-        return;
-    }
-
     deleteWord.pop_back();                                 // Remove last character
     int index = deleteWord[deleteWord.length() - 1] - 'A'; // Get index of character from 0-25
 
+    if (node->character[index] != nullptr) {
+        node->character[index]->counter--; // Decrement counter
+    }
+    if (deleteWord.length() < 2) {
+        return;
+    }
     // Delete node then traverse back up to parent
-    if (!hasChildren(node->character[index]) && !node->character[index]->isEndOfWord) {
+    if (!hasChildren(node->character[index]) && node->character[index] != nullptr && !node->character[index]->isEndOfWord) {
         delete node->character[index];
         node->character[index] = nullptr;
-        node = node->parent;
-        eraseRemainingNodes(node, deleteWord); // Recursive call
     }
+    node = node->parent;
+    eraseRemainingNodes(node, deleteWord); // Recursive call
 }
 
 // Check if node has any children

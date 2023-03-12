@@ -14,6 +14,7 @@ public:
     TrieNode *character[26];
     TrieNode *parent;
     bool isEndOfWord;
+    int counter;
 };
 
 #endif

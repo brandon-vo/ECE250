@@ -14,7 +14,6 @@ private:
     TrieNode *root;
     int numberOfWords;
     bool hasChildren(TrieNode *node);
-    int countRecursive(TrieNode *node);
     void eraseRemainingNodes(TrieNode *node, string word);
 
 public:

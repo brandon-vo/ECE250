@@ -13,6 +13,7 @@ TrieNode::TrieNode() {
     }
     this->parent = nullptr;
     this->isEndOfWord = false;
+    this->counter = 0;
 }
 
 // Destructor
