@@ -20,7 +20,7 @@ public:
     Trie();
     ~Trie();
     void insertWord(string word, bool load = false);
-    void eraseWord(TrieNode *node, string word, string wordCopy, bool nullFound = false);
+    void eraseWord(TrieNode *node, string word, string deleteWord, bool nullFound = false);
     void printWord(TrieNode *node, string word);
     void spellCheck(string word);
     void clearTrie();
