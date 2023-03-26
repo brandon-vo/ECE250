@@ -1,6 +1,7 @@
 ////////////////////////////////////
 // Brandon Vo - ECE 250 Project 4 //
 ////////////////////////////////////
+
 #include "Graph.h"
 #include "illegal_exception.h"
 #include <fstream>
@@ -50,10 +51,10 @@ int main() {
                     cout << e.what() << endl;
                 }
             } else if (command == "MST") {
-                g.MST(false);
+                g.kruskalMST(false);
                 cout << endl;
             } else if (command == "COST") {
-                g.MST(true);
+                g.kruskalMST(true);
             } else if (command == "END") {
                 break;
             }
