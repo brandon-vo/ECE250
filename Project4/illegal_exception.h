@@ -2,6 +2,9 @@
 // Brandon Vo - ECE 250 Project 4 //
 ////////////////////////////////////
 
+#ifndef ILLLEGAL_EXCEPTION_H
+#define ILLLEGAL_EXCEPTION_H
+
 #include <iostream>
 using namespace std;
 
@@ -12,3 +15,5 @@ public:
         return "illegal argument";
     }
 };
+
+#endif

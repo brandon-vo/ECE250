@@ -15,7 +15,7 @@ class Graph {
 private:
     vector<vector<tuple<int, int>>> adj; // Adjacency list
     void mergeSort(vector<tuple<int, int, int>> &edges, int low, int high);
-    int findParent(vector<int> &parent, int vertex);
+    void merge(vector<tuple<int, int, int>> &edges, int low, int mid, int high);
 
 public:
     Graph(int verticies = 0);                        // Constructor

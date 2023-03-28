@@ -7,6 +7,7 @@
 #include <tuple>
 #include <vector>
 
+#include "DisjointSet.h"
 #include "illegal_exception.h"
 
 Graph::Graph(int vertices) {
@@ -47,8 +48,7 @@ void Graph::insertEdge(int a, int b, int w, bool load) {
     }
 }
 
-// Runtime: O(V) where V is the number of vertices in the graph
-// The maximum degree of a node is O(V), so O(degree(a) * E) = O(V * E)
+// Runtime: O(|V| + |E|) where |V| is the number of vertices and |E| is the number of edges
 void Graph::deleteVertex(int a) {
     // Illegal input. Constant time.
     if (a <= 0 || a > 50000) {
@@ -59,21 +59,19 @@ void Graph::deleteVertex(int a) {
         cout << "failure" << endl;
         return;
     }
-
-    // Remove all edges containing vertex a
-    for (auto edge : adj[a]) {                                                       // O(degree(a)) where degree(a) is the degree of vertex a
-        int i = get<0>(edge);                                                        // Vertex connected to a
-        int weight = get<1>(edge);                                                   // Weight of the edge
-        for (auto iterator = adj[i].begin(); iterator != adj[i].end(); iterator++) { // O(E) where E is the number of edges in the graph
-            if (get<0>(*iterator) == a && get<1>(*iterator) == weight) {             // Check if the edge is the one to be removed
-                adj[i].erase(iterator);                                              // Remove the edge
+    int numVertices = adj.size();
+    for (int i = 0; i < numVertices; i++) { // Iterate through all vertices
+        if (i == a) {
+            adj[i].clear(); // Clear the vertex to be deleted
+        }
+        int numEdges = adj[i].size();
+        for (int j = 0; j < numEdges; j++) {      // Iterate through all edges of the vertex
+            if (get<0>(adj[i][j]) == a) {         // Check if the edge is the one to be removed
+                adj[i].erase(adj[i].begin() + j); // Remove the edge to the deleted vertex
                 break;
             }
         }
     }
-
-    // Clear the adjacency list for vertex a
-    adj[a].clear();
     cout << "success" << endl;
 }
 
@@ -96,48 +94,44 @@ void Graph::printAdjacent(int a) {
     cout << endl;
 }
 
+// Runtime: O(ElogE) where E is the number of edges in the graph
+// Used some logic from https://www.geeksforgeeks.org/merge-sort/
 void Graph::mergeSort(vector<tuple<int, int, int>> &edges, int low, int high) {
     if (low < high) {
         int mid = low + (high - low) / 2;
         mergeSort(edges, low, mid);      // Sort first half
         mergeSort(edges, mid + 1, high); // Sort second half
-
-        // Merge the two sorted halves
-        vector<tuple<int, int, int>> merged;
-        int i = low;
-        int j = mid + 1;
-        while (i <= mid && j <= high) {
-            if (get<2>(edges[i]) <= get<2>(edges[j])) {
-                merged.push_back(edges[i++]);
-            } else {
-                merged.push_back(edges[j++]);
-            }
-        }
-        while (i <= mid) {
-            merged.push_back(edges[i++]);
-        }
-        while (j <= high) {
-            merged.push_back(edges[j++]);
-        }
-
-        // Copy merged elements back to original array
-        for (int k = low; k <= high; k++) {
-            edges[k] = merged[k - low];
-        }
+        merge(edges, low, mid, high);    // Merge the two halves
     }
 }
 
-// Recursively find the root of the connected component
-int Graph::findParent(vector<int> &parent, int vertex) {
-    if (parent[vertex] != vertex) {
-        parent[vertex] = findParent(parent, parent[vertex]);
+// Helper function for mergeSort
+void Graph::merge(vector<tuple<int, int, int>> &edges, int low, int mid, int high) {
+    vector<tuple<int, int, int>> merged;
+    int i = low;
+    int j = mid + 1;
+    while (i <= mid && j <= high) {
+        if (get<2>(edges[i]) <= get<2>(edges[j])) {
+            merged.push_back(edges[i++]);
+        } else {
+            merged.push_back(edges[j++]);
+        }
     }
-    return parent[vertex];
+    while (i <= mid) {
+        merged.push_back(edges[i++]);
+    }
+    while (j <= high) {
+        merged.push_back(edges[j++]);
+    }
+    // Copy merged elements back to original edges vector
+    for (int k = low; k <= high; k++) {
+        edges[k] = merged[k - low];
+    }
 }
 
 // Citation: https://www.geeksforgeeks.org/kruskals-minimum-spanning-tree-algorithm-greedy-algo-2/
 // Used some of the logic from the above link to implement Kruskal's algorithm
-// Runtime: O(E(log(E)) = O(E(log(V))) since E <= O(V^2), log(E) = log(V^2) = 2log(V) = O(log(V))
+// Dominating Runtime: O(E(log(E)) = O(E(log(V))) since E <= O(V^2), log(E) = log(V^2) = 2log(V) = O(log(V))
 void Graph::kruskalMST(bool getCost) {
     if (adj.empty()) { // Graph is empty
         if (getCost) {
@@ -165,25 +159,21 @@ void Graph::kruskalMST(bool getCost) {
     // Runtime: O(E(log(E))) where E is the number of edges in the graph
     mergeSort(totalEdges, 0, totalEdges.size() - 1);
 
-    // Create disjoint set union for each vertex
-    vector<int> parent(n);
-    vector<int> rank(n);
-    for (int i = 0; i < n; i++) {
-        parent[i] = i; // Parent of each vertex is itself
-        rank[i] = 0;   // Rank is the height of the tree
-    }
+    DisjointSet set(n); // Create a disjoint set to keep track of connected components
 
     int mstCost = 0;                  // Store the cost of the MST
     vector<tuple<int, int>> mstEdges; // Store the edges of the MST
+
     // Iterate through sorted edges and add to MST if they do not create a cycle
     for (auto edge : totalEdges) {
-        int a = get<0>(edge);
-        int b = get<1>(edge);
-        int weight = get<2>(edge);
+
+        int a = get<0>(edge);      // Get vertex a
+        int b = get<1>(edge);      // Get vertex b
+        int weight = get<2>(edge); // Get weight of edge
 
         // Find parent of a and b using union-find
-        int parentA = findParent(parent, a);
-        int parentB = findParent(parent, b);
+        int parentA = set.findParent(a);
+        int parentB = set.findParent(b);
 
         // Check if a and b are in different connected components (no cycle)
         if (parentA != parentB) {
@@ -191,14 +181,8 @@ void Graph::kruskalMST(bool getCost) {
             mstCost += weight;                    // Add weight to cost
 
             // Union the two connected components
-            if (rank[parentA] > rank[parentB]) {
-                parent[parentB] = parentA;
-            } else if (rank[parentA] < rank[parentB]) {
-                parent[parentA] = parentB;
-            } else {
-                parent[parentB] = parentA;
-                rank[parentA]++;
-            }
+            set.unionSets(parentA, parentB);
+
             if (!getCost) { // Print MST as we go if requested
                 cout << get<0>(edge) << " " << get<1>(edge) << " " << get<2>(edge) << " ";
             }
