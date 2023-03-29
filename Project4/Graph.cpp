@@ -4,6 +4,7 @@
 
 #include "Graph.h"
 #include <iostream>
+#include <string>
 #include <tuple>
 #include <vector>
 
@@ -11,7 +12,9 @@
 #include "illegal_exception.h"
 
 Graph::Graph(int vertices) {
-    adj.resize(vertices); // Initialize the adjacency list size
+    this->adj.resize(vertices); // Initialize the adjacency list size
+    this->mstCost = 0;
+    this->mstStr = "";
 }
 
 // Runtime: O(degree(a)) where degree(a) is the degree of vertex a
@@ -27,21 +30,24 @@ void Graph::insertEdge(int a, int b, int w, bool load) {
 
     // Constant time
     int maxVertex = max(a, b);
-    if (maxVertex >= adj.size()) { // Resize the adjacency list if necessary
-        adj.resize(maxVertex + 1);
+    if (maxVertex >= this->adj.size()) { // Resize the adjacency list if necessary
+        this->adj.resize(maxVertex + 1);
     }
 
     // Check if edge already exists. O(degree(a))
-    for (auto edge : adj[a]) {   // Iterate through the edges of vertex a
-        if (get<0>(edge) == b) { // Check if the edge is the one to be added
+    for (auto edge : this->adj[a]) { // Iterate through the edges of vertex a
+        if (get<0>(edge) == b) {     // Check if the edge is the one to be added
             cout << "failure" << endl;
             return;
         }
     }
 
     // Add the edge. Constant time.
-    adj[a].push_back(make_tuple(b, w));
-    adj[b].push_back(make_tuple(a, w));
+    this->adj[a].push_back(make_tuple(b, w));
+    this->adj[b].push_back(make_tuple(a, w));
+
+    this->mstCost = 0; // A new edge was added, so the old MST cost is no longer valid (if it even existed in the first place)
+    this->mstStr = ""; // A new edge was added, so the old MST string is no longer valid (if it even existed in the first place)
 
     if (!load) {
         cout << "success" << endl;
@@ -55,23 +61,27 @@ void Graph::deleteVertex(int a) {
         throw illegal_exception();
     }
     // Check if vertex is not in the graph. Constant time.
-    if (adj.size() > 0 && adj[a].empty() || adj.size() == 0) {
+    if (this->adj.size() > 0 && this->adj[a].empty() || this->adj.size() == 0) {
         cout << "failure" << endl;
         return;
     }
-    int numVertices = adj.size();
+    int numVertices = this->adj.size();
     for (int i = 0; i < numVertices; i++) { // Iterate through all vertices
         if (i == a) {
-            adj[i].clear(); // Clear the vertex to be deleted
+            this->adj[i].clear(); // Clear the vertex to be deleted
         }
-        int numEdges = adj[i].size();
-        for (int j = 0; j < numEdges; j++) {      // Iterate through all edges of the vertex
-            if (get<0>(adj[i][j]) == a) {         // Check if the edge is the one to be removed
-                adj[i].erase(adj[i].begin() + j); // Remove the edge to the deleted vertex
+        int numEdges = this->adj[i].size();
+        for (int j = 0; j < numEdges; j++) {                  // Iterate through all edges of the vertex
+            if (get<0>(this->adj[i][j]) == a) {               // Check if the edge is the one to be removed
+                this->adj[i].erase(this->adj[i].begin() + j); // Remove the edge to the deleted vertex
                 break;
             }
         }
     }
+    
+    this->mstCost = 0; // A vertex was deleted, so the old MST cost is no longer valid (if it even existed in the first place)
+    this->mstStr = ""; // A vertex was deleted, so the old MST string is no longer valid (if it even existed in the first place)
+
     cout << "success" << endl;
 }
 
@@ -83,12 +93,12 @@ void Graph::printAdjacent(int a) {
         throw illegal_exception();
     }
     // Vertex not in graph
-    if (adj.size() > 0 && adj[a].empty() || adj.size() == 0) {
+    if (this->adj.size() > 0 && this->adj[a].empty() || this->adj.size() == 0) {
         cout << "failure" << endl;
         return;
     }
     // Print the adjacent vertices. O(degree(a))
-    for (auto edge : adj[a]) {
+    for (auto edge : this->adj[a]) {
         cout << get<0>(edge) << " ";
     }
     cout << endl;
@@ -131,24 +141,19 @@ void Graph::merge(vector<tuple<int, int, int>> &edges, int low, int mid, int hig
 
 // Citation: https://www.geeksforgeeks.org/kruskals-minimum-spanning-tree-algorithm-greedy-algo-2/
 // Used some of the logic from the above link to implement Kruskal's algorithm
-// Dominating Runtime: O(E(log(E)) = O(E(log(V))) since E <= O(V^2), log(E) = log(V^2) = 2log(V) = O(log(V))
-void Graph::kruskalMST(bool getCost) {
-    if (adj.empty()) { // Graph is empty
-        if (getCost) {
-            cout << "cost is 0" << endl;
-        } else {
-            cout << "failure";
-        }
+// Dominating Runtime: O(|E|(log(|E|)) = O(|E|(log(|V|))) since E <= O(V^2), log(E) = log(V^2) = 2log(V) = O(log(V))
+void Graph::kruskalMST() {
+    if (this->adj.empty()) { // Graph is empty
         return;
     }
 
-    int n = adj.size();
+    int n = this->adj.size();
 
     // Create a vector of all edges in the graph
     // Runtime: O(E) where E is the number of edges in the graph
     vector<tuple<int, int, int>> totalEdges; // (vertex a, vertex b, weight)
     for (int a = 0; a < n; a++) {            // Iterate through each vertex
-        for (auto edge : adj[a]) {           // Iterate through the edges of each vertex a
+        for (auto edge : this->adj[a]) {     // Iterate through the edges of each vertex a
             int b = get<0>(edge);
             int weight = get<1>(edge);
             totalEdges.push_back(make_tuple(a, b, weight)); // Add the edge to the vector
@@ -161,7 +166,7 @@ void Graph::kruskalMST(bool getCost) {
 
     DisjointSet set(n); // Create a disjoint set to keep track of connected components
 
-    int mstCost = 0; // Store the cost of the MST
+    this->mstCost = 0; // Reset the cost of the MST
 
     // Iterate through sorted edges and add to MST if they do not create a cycle
     for (auto edge : totalEdges) {
@@ -176,19 +181,27 @@ void Graph::kruskalMST(bool getCost) {
 
         // Check if a and b are in different connected components (no cycle)
         if (parentA != parentB) {
-            mstCost += weight; // Add weight to cost
 
-            // Union the two connected components
-            set.unionSets(parentA, parentB);
+            set.unionSets(parentA, parentB); // Union the two connected components
 
-            if (!getCost) { // Print MST as we go if requested
-                cout << get<0>(edge) << " " << get<1>(edge) << " " << get<2>(edge) << " ";
-            }
+            this->mstCost += weight; // Add weight to cost
+
+            // Add edge to MST string
+            this->mstStr += to_string(get<0>(edge)) + " " + to_string(get<1>(edge)) + " " + to_string(get<2>(edge)) + " ";
         }
     }
+}
 
-    // Print MST cost if requested
-    if (getCost) {
-        cout << "cost is " << mstCost << endl;
-    }
+// Get the string representation of the MST (vertex a, vertex b, weight...)
+// If we have already calculated the MST and the graph has not been
+// modified since, we can access the string in constant time
+string Graph::getMSTStr() {
+    return this->mstStr;
+}
+
+// Get the cost of the MST
+// If we have already calculated the MST and the graph has not been
+// modified since, we can access the cost in constant time
+int Graph::getMSTCost() {
+    return this->mstCost;
 }
