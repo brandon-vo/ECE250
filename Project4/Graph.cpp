@@ -161,8 +161,7 @@ void Graph::kruskalMST(bool getCost) {
 
     DisjointSet set(n); // Create a disjoint set to keep track of connected components
 
-    int mstCost = 0;                  // Store the cost of the MST
-    vector<tuple<int, int>> mstEdges; // Store the edges of the MST
+    int mstCost = 0; // Store the cost of the MST
 
     // Iterate through sorted edges and add to MST if they do not create a cycle
     for (auto edge : totalEdges) {
@@ -177,8 +176,7 @@ void Graph::kruskalMST(bool getCost) {
 
         // Check if a and b are in different connected components (no cycle)
         if (parentA != parentB) {
-            mstEdges.push_back(make_tuple(a, b)); // Add edge to MST
-            mstCost += weight;                    // Add weight to cost
+            mstCost += weight; // Add weight to cost
 
             // Union the two connected components
             set.unionSets(parentA, parentB);
