@@ -9,30 +9,31 @@
 
 DisjointSet::DisjointSet(int n) {
     // Create disjoint set union for each vertex
-    this->parent.resize(n);
+    this->leader.resize(n);
     this->rank.resize(n);
     for (int i = 0; i < n; i++) {
-        this->parent[i] = i; // Parent of each vertex is itself
+        this->leader[i] = i; // Leader of each vertex is itself
         this->rank[i] = 0;   // Rank is the height of the tree
     }
 }
 
-// Recursively find the root of the connected component
-int DisjointSet::findParent(int vertex) {
-    if (this->parent[vertex] != vertex) {
-        this->parent[vertex] = findParent(this->parent[vertex]);
+// Recursive function to find the representative of the set containing vertex
+int DisjointSet::findSet(int vertex) {
+    if (this->leader[vertex] != vertex) {
+        this->leader[vertex] = findSet(this->leader[vertex]);
     }
-    return this->parent[vertex];
+    return this->leader[vertex];
 }
 
 // Union two disjoint sets using union-by-rank
-void DisjointSet::unionSets(int parentA, int parentB) {
-    if (this->rank[parentA] > this->rank[parentB]) {
-        this->parent[parentB] = parentA;
-    } else if (this->rank[parentA] < this->rank[parentB]) {
-        this->parent[parentA] = parentB;
-    } else {
-        this->parent[parentB] = parentA;
-        this->rank[parentA]++;
+// Merge the smaller set into the larger set
+void DisjointSet::unionSets(int setA, int setB) {
+    if (this->rank[setA] > this->rank[setB]) {
+        this->leader[setB] = setA;
+    } else if (this->rank[setA] < this->rank[setB]) {
+        this->leader[setA] = setB;
+    } else { // If the sets are the same size, merge the second set into the first set and increment the rank of the first set
+        this->leader[setB] = setA;
+        this->rank[setA]++;
     }
 }

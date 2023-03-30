@@ -65,6 +65,9 @@ void Graph::deleteVertex(int a) {
         cout << "failure" << endl;
         return;
     }
+
+    // The outer loop itereates through all verticles in the graph
+    // The inner loop iterates through all edges of the current vertex
     int numVertices = this->adj.size();
     for (int i = 0; i < numVertices; i++) { // Iterate through all vertices
         if (i == a) {
@@ -78,7 +81,7 @@ void Graph::deleteVertex(int a) {
             }
         }
     }
-    
+
     this->mstCost = 0; // A vertex was deleted, so the old MST cost is no longer valid (if it even existed in the first place)
     this->mstStr = ""; // A vertex was deleted, so the old MST string is no longer valid (if it even existed in the first place)
 
@@ -140,7 +143,7 @@ void Graph::merge(vector<tuple<int, int, int>> &edges, int low, int mid, int hig
 }
 
 // Citation: https://www.geeksforgeeks.org/kruskals-minimum-spanning-tree-algorithm-greedy-algo-2/
-// Used some of the logic from the above link to implement Kruskal's algorithm
+// Used some of the logic from the above link, aswell as the lectures to implement Kruskal's algorithm
 // Dominating Runtime: O(|E|(log(|E|)) = O(|E|(log(|V|))) since E <= O(V^2), log(E) = log(V^2) = 2log(V) = O(log(V))
 void Graph::kruskalMST() {
     if (this->adj.empty()) { // Graph is empty
@@ -150,13 +153,14 @@ void Graph::kruskalMST() {
     int n = this->adj.size();
 
     // Create a vector of all edges in the graph
-    // Runtime: O(E) where E is the number of edges in the graph
     vector<tuple<int, int, int>> totalEdges; // (vertex a, vertex b, weight)
     for (int a = 0; a < n; a++) {            // Iterate through each vertex
         for (auto edge : this->adj[a]) {     // Iterate through the edges of each vertex a
             int b = get<0>(edge);
             int weight = get<1>(edge);
-            totalEdges.push_back(make_tuple(a, b, weight)); // Add the edge to the vector
+            if (a < b) {                                        // Only add each edge once to avoid duplicates
+                totalEdges.push_back(make_tuple(a, b, weight)); // Add the edge to the vector
+            }
         }
     }
 
@@ -175,19 +179,18 @@ void Graph::kruskalMST() {
         int b = get<1>(edge);      // Get vertex b
         int weight = get<2>(edge); // Get weight of edge
 
-        // Find parent of a and b using union-find
-        int parentA = set.findParent(a);
-        int parentB = set.findParent(b);
+        int setA = set.findSet(a); // Get the set of vertex a
+        int setB = set.findSet(b); // Get the set of vertex b
 
-        // Check if a and b are in different connected components (no cycle)
-        if (parentA != parentB) {
+        // Check if set a and set b are in different connected components (no cycle)
+        if (setA != setB) {
 
-            set.unionSets(parentA, parentB); // Union the two connected components
+            set.unionSets(setA, setB); // Union the two connected components
 
             this->mstCost += weight; // Add weight to cost
 
             // Add edge to MST string
-            this->mstStr += to_string(get<0>(edge)) + " " + to_string(get<1>(edge)) + " " + to_string(get<2>(edge)) + " ";
+            this->mstStr += to_string(a) + " " + to_string(b) + " " + to_string(weight) + " ";
         }
     }
 }

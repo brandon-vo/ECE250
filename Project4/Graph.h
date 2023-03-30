@@ -14,10 +14,10 @@ using namespace std;
 class Graph {
 private:
     vector<vector<tuple<int, int>>> adj; // Adjacency list
+    string mstStr;                       // String representation of the minimum spanning tree
+    int mstCost;                         // Cost of the minimum spanning tree
     void mergeSort(vector<tuple<int, int, int>> &edges, int low, int high);
     void merge(vector<tuple<int, int, int>> &edges, int low, int mid, int high);
-    int mstCost;   // Cost of the minimum spanning tree
-    string mstStr; // String representation of the minimum spanning tree
 
 public:
     Graph(int verticies = 0);                                // Constructor

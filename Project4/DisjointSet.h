@@ -12,13 +12,13 @@ using namespace std;
 
 class DisjointSet {
 private:
-    vector<int> parent; // Parent of each vertex
+    vector<int> leader; // Leader of each vertex
     vector<int> rank;   // Rank of each vertex (height of the tree)
 
 public:
-    DisjointSet(int n);                       // Constructor
-    int findParent(int vertex);               // Function to find the parent of a vertex
-    void unionSets(int parentA, int parentB); // Function to union two disjoint sets
+    DisjointSet(int n);                 // Constructor
+    int findSet(int vertex);            // Function to return a pointer to the representative of the set containing vertex
+    void unionSets(int setA, int setB); // Function to union two disjoint sets
 };
 
 #endif
