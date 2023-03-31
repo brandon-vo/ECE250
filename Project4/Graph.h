@@ -13,14 +13,14 @@ using namespace std;
 
 class Graph {
 private:
-    vector<vector<tuple<int, int>>> adj; // Adjacency list
-    string mstStr;                       // String representation of the minimum spanning tree
-    int mstCost;                         // Cost of the minimum spanning tree
-    void mergeSort(vector<tuple<int, int, int>> &edges, int low, int high);
-    void merge(vector<tuple<int, int, int>> &edges, int low, int mid, int high);
+    vector<vector<tuple<int, int>>> adj;                                         // Adjacency list
+    string mstStr;                                                               // String representation of the minimum spanning tree
+    int mstCost;                                                                 // Cost of the minimum spanning tree
+    void mergeSort(vector<tuple<int, int, int>> &edges, int low, int high);      // Merge sort function
+    void merge(vector<tuple<int, int, int>> &edges, int low, int mid, int high); // Merge function for merge sort
 
 public:
-    Graph(int verticies = 0);                                // Constructor
+    Graph();                                                 // Constructor
     void insertEdge(int a, int b, int w, bool load = false); // Function to add an edge to graph
     void deleteVertex(int a);                                // Function to delete a vertex
     void printAdjacent(int a);                               // Function to print adjacent vertices of a vertex

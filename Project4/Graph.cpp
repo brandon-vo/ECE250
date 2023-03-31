@@ -11,8 +11,8 @@
 #include "DisjointSet.h"
 #include "illegal_exception.h"
 
-Graph::Graph(int vertices) {
-    this->adj.resize(vertices); // Initialize the adjacency list size
+Graph::Graph() {
+    this->adj.resize(50001); // Initialize the adjacency list size
     this->mstCost = 0;
     this->mstStr = "";
 }
@@ -26,12 +26,6 @@ void Graph::insertEdge(int a, int b, int w, bool load) {
             throw illegal_exception();
         }
         return;
-    }
-
-    // Constant time
-    int maxVertex = max(a, b);
-    if (maxVertex >= this->adj.size()) { // Resize the adjacency list if necessary
-        this->adj.resize(maxVertex + 1);
     }
 
     // Check if edge already exists. O(degree(a))
@@ -54,7 +48,8 @@ void Graph::insertEdge(int a, int b, int w, bool load) {
     }
 }
 
-// Runtime: O(|V| + |E|) where |V| is the number of vertices and |E| is the number of edges
+// Delete a vertex and all edges that point to it
+// O(V + E) https://discuss.educative.io/t/did-not-understand-why-removing-the-vertex-would-take-o-v-e/22460
 void Graph::deleteVertex(int a) {
     // Illegal input. Constant time.
     if (a <= 0 || a > 50000) {
@@ -66,21 +61,21 @@ void Graph::deleteVertex(int a) {
         return;
     }
 
-    // The outer loop itereates through all verticles in the graph
-    // The inner loop iterates through all edges of the current vertex
-    int numVertices = this->adj.size();
-    for (int i = 0; i < numVertices; i++) { // Iterate through all vertices
-        if (i == a) {
-            this->adj[i].clear(); // Clear the vertex to be deleted
-        }
-        int numEdges = this->adj[i].size();
-        for (int j = 0; j < numEdges; j++) {                  // Iterate through all edges of the vertex
-            if (get<0>(this->adj[i][j]) == a) {               // Check if the edge is the one to be removed
-                this->adj[i].erase(this->adj[i].begin() + j); // Remove the edge to the deleted vertex
+    // Delete all edges to the vertex
+    for (auto edge : this->adj[a]) {
+        int b = get<0>(edge);
+        // Find the edge in the adjacency list of vertex b that points to vertex a
+        for (auto targetEdge = this->adj[b].begin(); targetEdge != this->adj[b].end(); targetEdge++) {
+            if (get<0>(*targetEdge) == a) {
+                // Erase the edge from the adjacency list of vertex b
+                this->adj[b].erase(targetEdge);
                 break;
             }
         }
     }
+
+    // Delete the vertex
+    this->adj[a].clear();
 
     this->mstCost = 0; // A vertex was deleted, so the old MST cost is no longer valid (if it even existed in the first place)
     this->mstStr = ""; // A vertex was deleted, so the old MST string is no longer valid (if it even existed in the first place)
@@ -150,11 +145,11 @@ void Graph::kruskalMST() {
         return;
     }
 
-    int n = this->adj.size();
+    int size = this->adj.size();
 
     // Create a vector of all edges in the graph
     vector<tuple<int, int, int>> totalEdges; // (vertex a, vertex b, weight)
-    for (int a = 0; a < n; a++) {            // Iterate through each vertex
+    for (int a = 0; a < size; a++) {         // Iterate through each vertex
         for (auto edge : this->adj[a]) {     // Iterate through the edges of each vertex a
             int b = get<0>(edge);
             int weight = get<1>(edge);
@@ -168,9 +163,7 @@ void Graph::kruskalMST() {
     // Runtime: O(E(log(E))) where E is the number of edges in the graph
     mergeSort(totalEdges, 0, totalEdges.size() - 1);
 
-    DisjointSet set(n); // Create a disjoint set to keep track of connected components
-
-    this->mstCost = 0; // Reset the cost of the MST
+    DisjointSet set(size); // Create a disjoint set to keep track of connected components
 
     // Iterate through sorted edges and add to MST if they do not create a cycle
     for (auto edge : totalEdges) {
