@@ -14,6 +14,7 @@ using namespace std;
 class Graph {
 private:
     vector<vector<tuple<int, int>>> adj;                                         // Adjacency list
+    vector<tuple<int, int, int>> totalEdges;                                     // Vector of edges
     string mstStr;                                                               // String representation of the minimum spanning tree
     int mstCost;                                                                 // Cost of the minimum spanning tree
     void mergeSort(vector<tuple<int, int, int>> &edges, int low, int high);      // Merge sort function

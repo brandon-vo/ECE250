@@ -39,6 +39,7 @@ void Graph::insertEdge(int a, int b, int w, bool load) {
     // Add the edge. Constant time.
     this->adj[a].push_back(make_tuple(b, w));
     this->adj[b].push_back(make_tuple(a, w));
+    this->totalEdges.push_back(make_tuple(a, b, w));
 
     this->mstCost = 0; // A new edge was added, so the old MST cost is no longer valid (if it even existed in the first place)
     this->mstStr = ""; // A new edge was added, so the old MST string is no longer valid (if it even existed in the first place)
@@ -61,21 +62,27 @@ void Graph::deleteVertex(int a) {
         return;
     }
 
-    // Delete all edges to the vertex
-    for (auto edge : this->adj[a]) {
-        int b = get<0>(edge);
-        // Find the edge in the adjacency list of vertex b that points to vertex a
-        for (auto targetEdge = this->adj[b].begin(); targetEdge != this->adj[b].end(); targetEdge++) {
-            if (get<0>(*targetEdge) == a) {
-                // Erase the edge from the adjacency list of vertex b
-                this->adj[b].erase(targetEdge);
+    // Delete all edges from vertex a
+    for (int i = 0; i < this->adj.size(); i++) { // Iterate through all vertices
+        vector<tuple<int, int>> &edges = this->adj[i];
+        for (int j = 0; j < edges.size(); j++) { // Iterate through all edges of vertex i
+            if (get<0>(edges[j]) == a) {         // Check if the edge is the one to be deleted
+                edges.erase(edges.begin() + j);  // Delete the edge
                 break;
             }
         }
     }
 
-    // Delete the vertex
-    this->adj[a].clear();
+    // Delete all edges from totalEdges that point to vertex a
+    for (auto edge = this->totalEdges.begin(); edge != this->totalEdges.end();) {
+        if (get<0>(*edge) == a || get<1>(*edge) == a) {
+            this->totalEdges.erase(edge);
+        } else {
+            edge++;
+        }
+    }
+
+    this->adj[a].clear(); // Delete the vertex
 
     this->mstCost = 0; // A vertex was deleted, so the old MST cost is no longer valid (if it even existed in the first place)
     this->mstStr = ""; // A vertex was deleted, so the old MST string is no longer valid (if it even existed in the first place)
@@ -147,26 +154,14 @@ void Graph::kruskalMST() {
 
     int size = this->adj.size();
 
-    // Create a vector of all edges in the graph
-    vector<tuple<int, int, int>> totalEdges; // (vertex a, vertex b, weight)
-    for (int a = 0; a < size; a++) {         // Iterate through each vertex
-        for (auto edge : this->adj[a]) {     // Iterate through the edges of each vertex a
-            int b = get<0>(edge);
-            int weight = get<1>(edge);
-            if (a < b) {                                        // Only add each edge once to avoid duplicates
-                totalEdges.push_back(make_tuple(a, b, weight)); // Add the edge to the vector
-            }
-        }
-    }
-
     // Sort the edges by weight in a non-decreasing order
     // Runtime: O(E(log(E))) where E is the number of edges in the graph
-    mergeSort(totalEdges, 0, totalEdges.size() - 1);
+    mergeSort(this->totalEdges, 0, this->totalEdges.size() - 1);
 
     DisjointSet set(size); // Create a disjoint set to keep track of connected components
 
     // Iterate through sorted edges and add to MST if they do not create a cycle
-    for (auto edge : totalEdges) {
+    for (auto edge : this->totalEdges) {
 
         int a = get<0>(edge);      // Get vertex a
         int b = get<1>(edge);      // Get vertex b
