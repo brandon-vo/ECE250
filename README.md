@@ -1,17 +1,27 @@
 # ECE250 Projects - Brandon Vo
 
-This repository is used for me to save my programming projects for 
-ECE 250 and make it easy to transfer code to and from different devices
+This repository was used for each of my projects in ECE250 Data Structures and Algorithms (University of Waterloo 2A).  
+Completed in C++
 
-*Run test file script*  
-`bash run_tests.sh c d` (Windows)  
-`sh run_tests.sh c d` (Mac)  
+## Project 1 - Linked List  
+Calculator which can compute addition and subtraction using Linked Lists 
 
-*Run files manually*  
-`./a.out < file_name.in`
+## Project 2 - Hash Table  
+Open Addressing and Separate Chaining Hash Tables with Virtual Memory
 
-*Create tar files in ECEUbuntu*  
-`tar -cvzf b4vo_pn.tar.gz *`
+## Project 3 - Trie  
+Trie Implementation with Spellcheck  
 
-*Design Document Name Requirement*  
-b4vo_design_pn.pdf
+## Project 4 - Graph  
+Unweighted, Undirected Graph with Kruskal's MST  
+
+## Results
+
+| Project | Autograder | Design Document |
+|---------|------------|-----------------|
+| P1 | 100% | 100% |
+| P2 | 100% | 90% |
+| P3 | 100% | 97% |
+| P4 | 100% | 100% |
+
+Credit: ECE 250 Teaching Staff, [ece250-testcases](https://github.com/JZJisawesome/ece250-testcases) by ECE W2023 2A Class for test cases
