@@ -13,8 +13,9 @@ Hash tables using open addressing and separate chaining collision handling with 
 Trie implementation with spellcheck feature  
 
 ### Project 4 - Graph  
-Unweighted, undirected graph with Kruskal's algorithm to calculate the minimum spanning tree  
+An unweighted, undirected graph with Kruskal's algorithm to calculate the minimum spanning tree  
 
+<!--
 ### Results
 
 | Project | Autograder | Design Document |
@@ -23,5 +24,6 @@ Unweighted, undirected graph with Kruskal's algorithm to calculate the minimum s
 | P2 | 100% | 90% |
 | P3 | 100% | 97% |
 | P4 | 100% | 100% |
+-->
 
-Credit: University of Waterloo ECE 250 Teaching Staff, [ece250-testcases](https://github.com/JZJisawesome/ece250-testcases) by the ECE Winter 2023 2A Class for test cases
+Credit: University of Waterloo ECE 250 Teaching Staff, [ece250-testcases](https://github.com/JZJisawesome/ece250-testcases) (ECE 2026 Winter 2023 Students)
